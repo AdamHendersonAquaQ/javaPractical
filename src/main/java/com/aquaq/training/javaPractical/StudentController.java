@@ -24,9 +24,5 @@ public class StudentController {
         return studentJdbcDao.findById(id);
     }
 
-    @GetMapping("/semester/{semesterCode}")
-    public List<Student> findStudentsBySemester(@PathVariable(value = "semesterCode") String semesterCode) {
-        return studentJdbcDao.findBySemester(semesterCode);
-    }
 
 }

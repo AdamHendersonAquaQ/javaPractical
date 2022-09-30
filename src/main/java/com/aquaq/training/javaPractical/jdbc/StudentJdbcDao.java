@@ -24,12 +24,4 @@ public class StudentJdbcDao {
                 new BeanPropertyRowMapper<>(Student.class), id).get(0);
     }
 
-    public List<Student> findBySemester(String semesterCode) {
-        return jdbcTemplate.query("SELECT DISTINCT Student.StudentId, FirstName, LastName, " +
-                "GraduationYear, SemesterCode FROM Student LEFT JOIN StudentCourse ON " +
-                "Student.StudentId = StudentCourse.StudentId LEFT JOIN Course ON " +
-                "StudentCourse.CourseId = Course.CourseId WHERE Course.SemesterCode = ?",
-                new BeanPropertyRowMapper<>(Student.class), semesterCode);
-    }
-
 }
