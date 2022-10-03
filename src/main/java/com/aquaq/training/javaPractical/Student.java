@@ -8,6 +8,9 @@ public class Student {
     private String lastName;
     private Date graduationYear;
 
+    public Student()
+    {}
+
     public Student(int studentId, String firstName, String lastName, Date graduationYear){
         this.studentId=studentId;
         this.firstName=firstName;
@@ -45,5 +48,11 @@ public class Student {
 
     public void setGraduationYear(Date graduationYear) {
         this.graduationYear = graduationYear;
+    }
+
+    public String toString()
+    {
+        return String.format("\nPerson [id=%s, firstName=%s, lastName=%s, graduationYear=%s]",
+                this.studentId,this.firstName,this.lastName,this.graduationYear);
     }
 }
