@@ -1,6 +1,7 @@
 package com.aquaq.training.javaPractical.jdbc;
 
 import com.aquaq.training.javaPractical.Student;
+import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,8 +21,16 @@ public class StudentJdbcDao {
     }
 
     public Student findById(int id) {
-        return (Student) jdbcTemplate.query("select * from Student where studentId=?",
-                new BeanPropertyRowMapper<>(Student.class), id).get(0);
+        List<Student> students = jdbcTemplate.query("select * from Student where studentId=?",
+                new BeanPropertyRowMapper<>(Student.class), id);
+        if(students.size() == 0) {
+            throw new StudentNotFoundException("Student id not found - " + id);}
+        else{
+            return students.get(0);}
     }
 
+    public Student findByStudentName(String firstName, String lastName) {
+        return jdbcTemplate.queryForObject("select * from Student where firstName = ? AND lastName = ?",
+                new BeanPropertyRowMapper<>(Student.class), firstName, lastName);
+    }
 }
