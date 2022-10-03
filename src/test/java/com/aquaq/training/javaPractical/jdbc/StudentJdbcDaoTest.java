@@ -109,6 +109,43 @@ public class StudentJdbcDaoTest {
 
     }
 
+    @Test
+    public void findBySemesterTest()
+    {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student(13,"Samuel","Guthrie",new Date(01012023)));
+
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(students);
+
+        List<Student> returnVal = repository.findBySemester("AUTUMN2022");
+        assertEquals(returnVal.get(0).getStudentId(),13);
+        assertEquals(returnVal.get(0).getFirstName(),"Samuel");
+    }
+
+    @Test
+    public void findBySemesterTest_fail_semester_code()
+    {
+        List<Student> students = new ArrayList<>();
+
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(students);
+
+        assertThrows(StudentNotFoundException.class, () -> repository.findBySemester("test"));
+    }
+
+    @Test
+    public void findBySemesterTest_fail_no_students()
+    {
+        List<Student> students = new ArrayList<>();
+
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(students);
+
+        assertThrows(StudentNotFoundException.class, () -> repository.findBySemester("AUTUMN2022"));
+
+    }
+
 
 
 

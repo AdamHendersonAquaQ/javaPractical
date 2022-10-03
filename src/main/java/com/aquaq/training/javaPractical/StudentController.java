@@ -33,6 +33,10 @@ public class StudentController {
         return studentJdbcDao.findByStudentName(firstName, lastName);
     }
 
+    @GetMapping("/semester/{semesterCode}")
+    public List<Student> findStudentsBySemester(@PathVariable(value = "semesterCode") String semesterCode) {
+        return studentJdbcDao.findBySemester(semesterCode);
+    }
 
     @ExceptionHandler
     public ResponseEntity<StudentErrorResponse> handleStudentException(StudentNotFoundException exc) {
