@@ -16,21 +16,29 @@ public class StudentJdbcDao {
     JdbcTemplate jdbcTemplate;
 
     public List<Student> findAll() {
-        return jdbcTemplate.query("select * from Student",
+        List<Student> students = jdbcTemplate.query("select * from Student",
                 new BeanPropertyRowMapper<>(Student.class));
+        if(students.size()==0)
+            throw new StudentNotFoundException("No students found");
+        else
+            return students;
     }
 
     public Student findById(int id) {
         List<Student> students = jdbcTemplate.query("select * from Student where studentId=?",
                 new BeanPropertyRowMapper<>(Student.class), id);
-        if(students.size() == 0) {
-            throw new StudentNotFoundException("Student id not found - " + id);}
-        else{
-            return students.get(0);}
+        if(students.size() == 0)
+            throw new StudentNotFoundException("Student id not found - " + id);
+        else
+            return students.get(0);
     }
 
     public Student findByStudentName(String firstName, String lastName) {
-        return jdbcTemplate.queryForObject("select * from Student where firstName = ? AND lastName = ?",
+        List<Student> students =  jdbcTemplate.query("select * from Student where firstName = ? AND lastName = ?",
                 new BeanPropertyRowMapper<>(Student.class), firstName, lastName);
+        if(students.size() == 0)
+            throw new StudentNotFoundException("Student name not found - " + firstName+" "+lastName);
+        else
+            return students.get(0);
     }
 }
