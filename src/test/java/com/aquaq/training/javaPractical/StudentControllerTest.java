@@ -1,21 +1,23 @@
 package com.aquaq.training.javaPractical;
 
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,7 +33,7 @@ public class StudentControllerTest {
     @Test
     public void findAllStudentsTest() throws Exception {
         List<Student> students = new ArrayList<>();
-        students.add(new Student(9,"Piotr","Rasputin",new Date(01012025)));
+        students.add(new Student(9,"Piotr","Rasputin",2025));
         Mockito.when(studentJdbcDao.findAll()).thenReturn(students);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/student"))
                 .andExpect(status().isOk())
@@ -40,7 +42,7 @@ public class StudentControllerTest {
 
     @Test
     public void findByIdTest() throws Exception {
-        Student student = new Student(10,"Katherine","Pryde",new Date(01012025));
+        Student student = new Student(10,"Katherine","Pryde",2025);
         Mockito.when(studentJdbcDao.findById(anyInt())).thenReturn(student);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/student/id/10"))
                 .andExpect(status().isOk())
@@ -49,10 +51,41 @@ public class StudentControllerTest {
 
     @Test
     public void findByNameTest() throws Exception {
-        Student student = new Student(11,"Alex","Summers",new Date(01012025));
+        Student student = new Student(11,"Alex","Summers",2025);
         Mockito.when(studentJdbcDao.findByStudentName(anyString(),anyString())).thenReturn(student);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/student/studentName/?firstName=Alex&lastName=Summers"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.studentId", Matchers.equalTo(11)));
+    }
+
+    @Test
+    public void findBySemesterTest() throws Exception {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student(15,"Rahne","Sinclair",2025));
+        Mockito.when(studentJdbcDao.findBySemester(anyString())).thenReturn(students);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/student/semester/AUTUMN2023"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].studentId", Matchers.equalTo(15)));
+    }
+
+    @Test
+    public void addStudentTest() throws Exception {
+        Student outputStudent = new Student(13,"Roberto","DaCosta",2025);
+        Mockito.when(studentJdbcDao.addNewStudent(any(Student.class))).thenReturn(outputStudent);
+
+        Student inputStudent = new Student();
+        inputStudent.setFirstName("Roberto");
+        inputStudent.setFirstName("DaCosta");
+        inputStudent.setGraduationYear(2025);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(inputStudent);
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/student/addStudent/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.studentId", Matchers.equalTo(13)))
+                .andExpect(jsonPath("$.firstName",Matchers.equalTo("Roberto")));
     }
 }

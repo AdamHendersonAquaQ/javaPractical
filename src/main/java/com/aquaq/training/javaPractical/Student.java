@@ -1,17 +1,15 @@
 package com.aquaq.training.javaPractical;
 
-import java.sql.Date;
-
 public class Student {
+
     private int studentId;
     private String firstName;
     private String lastName;
-    private Date graduationYear;
+    private int graduationYear;
 
     public Student()
     {}
-
-    public Student(int studentId, String firstName, String lastName, Date graduationYear){
+    public Student(int studentId, String firstName, String lastName, int graduationYear){
         this.studentId=studentId;
         this.firstName=firstName;
         this.lastName=lastName;
@@ -42,11 +40,11 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public Date getGraduationYear() {
+    public int getGraduationYear() {
         return graduationYear;
     }
 
-    public void setGraduationYear(Date graduationYear) {
+    public void setGraduationYear(int graduationYear) {
         this.graduationYear = graduationYear;
     }
 

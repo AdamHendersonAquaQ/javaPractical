@@ -3,7 +3,7 @@ CREATE TABLE Student
     studentId INT NOT NULL AUTO_INCREMENT,
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255),
-    graduationYear DATE,
+    graduationYear INT,
     PRIMARY KEY(studentId)
 );
 
@@ -28,15 +28,15 @@ CREATE TABLE StudentCourse
 );
 
 INSERT INTO Student (firstName, lastName, graduationYear)
-VALUES ('Scott', 'Summers', '2024-01-01');
+VALUES ('Scott', 'Summers', '2024');
 INSERT INTO Student (firstName, lastName, graduationYear)
-VALUES ('Jean', 'Grey', '2024-01-01');
+VALUES ('Jean', 'Grey', '2024');
 INSERT INTO Student (firstName, lastName, graduationYear)
-VALUES ('Hank', 'McCoy', '2023-01-01');
+VALUES ('Hank', 'McCoy', '2023');
 INSERT INTO Student (firstName, lastName, graduationYear)
-VALUES ('Robert', 'Drake', '2025-01-01');
+VALUES ('Robert', 'Drake', '2025');
 INSERT INTO Student (firstName, lastName, graduationYear)
-VALUES ('Warren', 'Worthington', '2024-01-01');
+VALUES ('Warren', 'Worthington', '2024');
 
 INSERT INTO Course (courseName, subjectArea, creditAmount, studentCapacity, semesterCode)
 VALUES ('English', 'English', 5, 3, 'AUTUMN2022');

@@ -10,14 +10,16 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -28,6 +30,8 @@ public class StudentJdbcDaoTest {
     StudentJdbcDao repository;
     @Mock
     JdbcTemplate jdbcTemplate;
+    private final GeneratedKeyHolderFactory keyHolderFactory = mock(GeneratedKeyHolderFactory.class);
+
 
     @Test
     void contextLoads()
@@ -38,7 +42,7 @@ public class StudentJdbcDaoTest {
     public void findAllTest()
     {
         List<Student> students = new ArrayList<>();
-        students.add(new Student(6,"Sean","Cassidy",new Date(01012023)));
+        students.add(new Student(6,"Sean","Cassidy",2023));
 
         when(jdbcTemplate.query(anyString(), any(RowMapper.class)))
                 .thenReturn(students);
@@ -63,7 +67,7 @@ public class StudentJdbcDaoTest {
     public void findByIdTest()
     {
         List<Student> students = new ArrayList<>();
-        students.add(new Student(7,"Kurt","Wagner",new Date(01012023)));
+        students.add(new Student(7,"Kurt","Wagner",2023));
 
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyInt()))
                 .thenReturn(students);
@@ -87,14 +91,14 @@ public class StudentJdbcDaoTest {
     public void findByNameTest()
     {
         List<Student> students = new ArrayList<>();
-        students.add(new Student(8,"Ororo","Monroe",new Date(01012023)));
+        students.add(new Student(8,"Ororo","Monroe",2023));
 
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString(),anyString()))
                 .thenReturn(students);
 
         Student returnVal = repository.findByStudentName("Ororo","Monroe");
         assertEquals(returnVal.getStudentId(),8);
-        assertEquals(returnVal.getGraduationYear(),new Date(01012023));
+        assertEquals(returnVal.getGraduationYear(),2023);
     }
 
     @Test
@@ -113,7 +117,7 @@ public class StudentJdbcDaoTest {
     public void findBySemesterTest()
     {
         List<Student> students = new ArrayList<>();
-        students.add(new Student(13,"Samuel","Guthrie",new Date(01012023)));
+        students.add(new Student(13,"Samuel","Guthrie",2023));
 
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
                 .thenReturn(students);
@@ -143,8 +147,37 @@ public class StudentJdbcDaoTest {
                 .thenReturn(students);
 
         assertThrows(StudentNotFoundException.class, () -> repository.findBySemester("AUTUMN2022"));
-
     }
+
+    @Test
+    public void addStudentTest()
+    {
+        KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
+        when(jdbcTemplate.update(anyString(),any(MapSqlParameterSource.class),any(KeyHolder.class))).thenReturn(1);
+        when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
+        Student inputStudent = new Student();
+        inputStudent.setFirstName("Rahne");
+        inputStudent.setLastName("Sinclair");
+        inputStudent.setGraduationYear(2025);
+        Student outputStudent = repository.addNewStudent(inputStudent);
+        assertEquals(outputStudent.getStudentId(),14);
+        assertEquals(outputStudent.getFirstName(),inputStudent.getFirstName());
+    }
+
+    @Test
+    public void addStudentTest_fail()
+    {
+        Student student = new Student();
+        assertThrows(StudentNotFoundException.class, () -> repository.addNewStudent(student));
+    }
+
+    @Test
+    public void keyHolderFactoryTest()
+    {
+        GeneratedKeyHolderFactory keyHolderFactory = new GeneratedKeyHolderFactory();
+        assertEquals(keyHolderFactory.newKeyHolder().getClass(), GeneratedKeyHolder.class);
+    }
+
 
 
 

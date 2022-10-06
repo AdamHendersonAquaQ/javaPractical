@@ -2,8 +2,6 @@ package com.aquaq.training.javaPractical;
 
 import org.junit.jupiter.api.Test;
 
-import java.sql.Date;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StudentTest {
@@ -36,15 +34,15 @@ public class StudentTest {
     public void studentGraduationYearTest()
     {
         Student student = new Student();
-        student.setGraduationYear(new Date(01012023));
-        assertEquals(student.getGraduationYear(),new Date(01012023));
+        student.setGraduationYear(2023);
+        assertEquals(student.getGraduationYear(),2023);
     }
 
     @Test
     public void toStringTest()
     {
-        Student student = new Student(12,"Lorna","Dane",new Date(01012023));
-        assertEquals(student.toString().trim(), "Person [id=12, firstName=Lorna, lastName=Dane, graduationYear=1970-01-01]".trim());
+        Student student = new Student(12,"Lorna","Dane",2023);
+        assertEquals(student.toString().trim(), "Person [id=12, firstName=Lorna, lastName=Dane, graduationYear=2023]".trim());
     }
 
 }

@@ -28,7 +28,7 @@ public class StudentController {
         return studentJdbcDao.findById(id);
     }
 
-    @GetMapping("studentName/")
+    @GetMapping("/studentName/")
     public Student findStudentByName(@RequestParam String firstName, @RequestParam String lastName) {
         return studentJdbcDao.findByStudentName(firstName, lastName);
     }
@@ -36,6 +36,12 @@ public class StudentController {
     @GetMapping("/semester/{semesterCode}")
     public List<Student> findStudentsBySemester(@PathVariable(value = "semesterCode") String semesterCode) {
         return studentJdbcDao.findBySemester(semesterCode);
+    }
+
+    @PostMapping("/addStudent/")
+    public Student addStudent(@RequestBody Student student)
+    {
+        return studentJdbcDao.addNewStudent(student);
     }
 
     @ExceptionHandler
