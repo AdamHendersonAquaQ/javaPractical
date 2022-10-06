@@ -5,6 +5,8 @@ import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +16,7 @@ public class StudentJdbcDao {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
 
     public List<Student> findAll() {
         List<Student> students = jdbcTemplate.query("select * from Student",
@@ -52,4 +55,24 @@ public class StudentJdbcDao {
         } else
             throw new StudentNotFoundException("Semester not found - " + semesterCode);
     }
+
+    @Autowired
+    GeneratedKeyHolderFactory keyHolderFactory;
+
+    public Student addNewStudent(Student student) {
+        if(student.getFirstName()==null||student.getFirstName().isEmpty())
+            throw new StudentNotFoundException("Student cannot be created with no first name");
+        KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
+        String sql = ("INSERT INTO STUDENT (firstName,lastName,graduationYear) VALUES " +
+                "(:firstName, :lastName, :graduationYear)");
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue(":firstName",student.getFirstName());
+        parameters.addValue(":lastName",student.getLastName());
+        parameters.addValue(":graduationYear",student.getGraduationYear());
+        jdbcTemplate.update(sql,parameters,keyHolder);
+        student.setStudentId(keyHolder.getKey().intValue());
+        return student;
+    }
 }
+
+
