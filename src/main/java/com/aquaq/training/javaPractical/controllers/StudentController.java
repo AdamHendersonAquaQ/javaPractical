@@ -1,5 +1,6 @@
-package com.aquaq.training.javaPractical;
+package com.aquaq.training.javaPractical.controllers;
 
+import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.StudentErrorResponse;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;

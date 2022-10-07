@@ -1,4 +1,4 @@
-package com.aquaq.training.javaPractical;
+package com.aquaq.training.javaPractical.classes;
 
 import org.junit.jupiter.api.Test;
 

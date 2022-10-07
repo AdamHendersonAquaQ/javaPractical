@@ -1,4 +1,4 @@
-package com.aquaq.training.javaPractical;
+package com.aquaq.training.javaPractical.classes;
 
 public class Student {
 

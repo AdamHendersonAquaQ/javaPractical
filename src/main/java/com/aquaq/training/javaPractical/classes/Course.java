@@ -1,4 +1,4 @@
-package com.aquaq.training.javaPractical;
+package com.aquaq.training.javaPractical.classes;
 
 public class Course {
     private int courseId;
@@ -7,6 +7,9 @@ public class Course {
     private int creditAmount;
     private int studentCapacity;
     private String semesterCode;
+
+    public Course()
+    {}
 
     public Course(int courseId, String courseName, String subjectArea,
                   int creditAmount, int studentCapacity, String semesterCode) {
