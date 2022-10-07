@@ -1,14 +1,15 @@
 package com.aquaq.training.javaPractical.jdbc;
 
-import com.aquaq.training.javaPractical.Student;
+import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -17,6 +18,8 @@ public class StudentJdbcDao {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    GeneratedKeyHolderFactory keyHolderFactory;
 
     public List<Student> findAll() {
         List<Student> students = jdbcTemplate.query("select * from Student",
@@ -56,20 +59,20 @@ public class StudentJdbcDao {
             throw new StudentNotFoundException("Semester not found - " + semesterCode);
     }
 
-    @Autowired
-    GeneratedKeyHolderFactory keyHolderFactory;
-
     public Student addNewStudent(Student student) {
         if(student.getFirstName()==null||student.getFirstName().isEmpty())
             throw new StudentNotFoundException("Student cannot be created with no first name");
         KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
-        String sql = ("INSERT INTO STUDENT (firstName,lastName,graduationYear) VALUES " +
-                "(:firstName, :lastName, :graduationYear)");
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue(":firstName",student.getFirstName());
-        parameters.addValue(":lastName",student.getLastName());
-        parameters.addValue(":graduationYear",student.getGraduationYear());
-        jdbcTemplate.update(sql,parameters,keyHolder);
+        String sql = ("INSERT INTO Student (firstName,lastName,graduationYear) " +
+                "VALUES (?,?,?)");
+        jdbcTemplate.update(c -> {
+            PreparedStatement ps = c
+                    .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, student.getFirstName());
+            ps.setString(2, student.getLastName());
+            ps.setInt(3, student.getGraduationYear());
+            return ps;
+        },keyHolder);
         student.setStudentId(keyHolder.getKey().intValue());
         return student;
     }
