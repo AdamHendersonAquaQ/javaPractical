@@ -1,6 +1,7 @@
-package com.aquaq.training.javaPractical;
+package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Student;
+import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -30,6 +31,8 @@ public class StudentControllerTest {
 
     @MockBean
     private StudentJdbcDao studentJdbcDao;
+    @MockBean
+    private CourseJdbcDao courseJdbcDao;
 
     @Test
     public void findAllStudentsTest() throws Exception {
