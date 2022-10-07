@@ -1,6 +1,7 @@
 package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Course;
+import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,6 +34,28 @@ public class CourseControllerTest {
     @MockBean
     private StudentJdbcDao studentJdbcDao;
 
+    @Test
+    public void findAllCoursesTest() throws Exception {
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        Mockito.when(courseJdbcDao.findAll()).thenReturn(courses);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].courseName", Matchers.equalTo("Biology")));
+    }
+
+    @Test
+    public void findBySemesterTest() throws Exception {
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        Mockito.when(courseJdbcDao.findBySemester(anyString())).thenReturn(courses);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/WINTER2023"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].courseName", Matchers.equalTo("Biology")));
+    }
+    
     @Test
     public void addCourseTest() throws Exception {
         Course outputCourse = new Course(13,"Biology",
