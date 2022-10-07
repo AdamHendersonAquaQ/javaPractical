@@ -38,6 +38,33 @@ public class CourseJdbcDao {
         else
             return courses;
     }
+
+    public List<Course> findByCourseName(String courseName) {
+        List<Course> courses = jdbcTemplate.query("select * from Course where courseName=?",
+                new BeanPropertyRowMapper<>(Course.class), courseName);
+        if (courses.size() == 0)
+            throw new CourseNotFoundException("No courses with this name found - " + courseName);
+        else
+            return courses;
+    }
+
+    public Course findById(int id) {
+        Course course = jdbcTemplate.queryForObject("select * from Course where courseId=?",
+                new BeanPropertyRowMapper<>(Course.class), id);
+        if (course.getCourseName() == null || course.getCourseName().isEmpty())
+            throw new CourseNotFoundException("No courses with this id found - " + id);
+        else
+            return course;
+    }
+
+    public List<Course> findBySubjectArea(String subjectArea) {
+        List<Course> courses = jdbcTemplate.query("select * from Course where subjectArea=?",
+                new BeanPropertyRowMapper<>(Course.class), subjectArea);
+        if (courses.size() == 0)
+            throw new CourseNotFoundException("No courses with this subject area found - " + subjectArea);
+        else
+            return courses;
+    }
     
     public Course addNewCourse(Course course) {
         if(course.getCourseName()==null||course.getCourseName().isEmpty())

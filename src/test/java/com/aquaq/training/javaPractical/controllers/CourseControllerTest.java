@@ -1,7 +1,6 @@
 package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Course;
-import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +50,39 @@ public class CourseControllerTest {
         courses.add(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
         Mockito.when(courseJdbcDao.findBySemester(anyString())).thenReturn(courses);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/WINTER2023"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/semester/WINTER2023"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].courseName", Matchers.equalTo("Biology")));
+    }
+
+    @Test
+    public void findByNameTest() throws Exception {
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        Mockito.when(courseJdbcDao.findByCourseName(anyString())).thenReturn(courses);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/name/Biology"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].courseName", Matchers.equalTo("Biology")));
+    }
+
+    @Test
+    public void findByIdTest() throws Exception {
+        Course course = new Course(9,"Biology","Science",
+                5,5,"WINTER2023");
+        Mockito.when(courseJdbcDao.findById(anyInt())).thenReturn(course);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/id/9"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courseName", Matchers.equalTo("Biology")));
+    }
+
+    @Test
+    public void findBySubjectAreaTest() throws Exception {
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        Mockito.when(courseJdbcDao.findBySubjectArea(anyString())).thenReturn(courses);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/subject/Science"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].courseName", Matchers.equalTo("Biology")));
     }

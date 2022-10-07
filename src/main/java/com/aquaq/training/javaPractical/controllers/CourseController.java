@@ -1,7 +1,6 @@
 package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Course;
-import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.CourseErrorResponse;
 import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
@@ -25,9 +24,24 @@ public class CourseController {
         return courseJdbcDao.findAll();
     }
 
-    @GetMapping("/{semesterCode}")
-    public List<Course> findCourseById(@PathVariable(value = "semesterCode") String semesterCode) {
+    @GetMapping("/semester/{semesterCode}")
+    public List<Course> findCourseBySemester(@PathVariable(value = "semesterCode") String semesterCode) {
         return courseJdbcDao.findBySemester(semesterCode);
+    }
+
+    @GetMapping("/name/{courseName}")
+    public List<Course> findCourseByName(@PathVariable(value = "courseName") String courseName) {
+        return courseJdbcDao.findByCourseName(courseName);
+    }
+
+    @GetMapping("/id/{id}")
+    public Course findCourseById(@PathVariable(value = "id") int id) {
+        return courseJdbcDao.findById(id);
+    }
+
+    @GetMapping("/subject/{subjectArea}")
+    public List<Course> findCourseBySubjectArea(@PathVariable(value = "subjectArea") String subjectArea) {
+        return courseJdbcDao.findBySubjectArea(subjectArea);
     }
 
     @PostMapping("/addCourse/")
