@@ -1,6 +1,7 @@
 package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Course;
+import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.CourseErrorResponse;
 import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -17,12 +20,21 @@ public class CourseController {
     @Autowired
     private CourseJdbcDao courseJdbcDao;
 
+    @GetMapping
+    public List<Course> findAllCourses() {
+        return courseJdbcDao.findAll();
+    }
+
+    @GetMapping("/{semesterCode}")
+    public List<Course> findCourseById(@PathVariable(value = "semesterCode") String semesterCode) {
+        return courseJdbcDao.findBySemester(semesterCode);
+    }
+
     @PostMapping("/addCourse/")
     public Course addCourse(@RequestBody Course course)
     {
         return courseJdbcDao.addNewCourse(course);
     }
-
 
     @ExceptionHandler
     public ResponseEntity<CourseErrorResponse> handleCourseException(CourseNotFoundException exc) {
