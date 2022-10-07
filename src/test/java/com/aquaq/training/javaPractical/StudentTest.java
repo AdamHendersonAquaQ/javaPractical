@@ -1,5 +1,6 @@
 package com.aquaq.training.javaPractical;
 
+import com.aquaq.training.javaPractical.classes.Student;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

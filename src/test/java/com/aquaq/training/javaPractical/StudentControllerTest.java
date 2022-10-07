@@ -1,5 +1,6 @@
 package com.aquaq.training.javaPractical;
 
+import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;

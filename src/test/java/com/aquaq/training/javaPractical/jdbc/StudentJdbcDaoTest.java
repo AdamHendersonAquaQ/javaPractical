@@ -1,7 +1,7 @@
 package com.aquaq.training.javaPractical.jdbc;
 
 import com.aquaq.training.javaPractical.JavaPracticalApplication;
-import com.aquaq.training.javaPractical.Student;
+import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
