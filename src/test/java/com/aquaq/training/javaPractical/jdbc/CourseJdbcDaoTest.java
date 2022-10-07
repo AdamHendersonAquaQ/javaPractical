@@ -2,9 +2,7 @@ package com.aquaq.training.javaPractical.jdbc;
 
 import com.aquaq.training.javaPractical.JavaPracticalApplication;
 import com.aquaq.training.javaPractical.classes.Course;
-import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
-import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -89,7 +87,75 @@ public class CourseJdbcDaoTest {
                 .thenReturn(courses);
         assertThrows(CourseNotFoundException.class, () -> repository.findBySemester("WINTER2023"));
     }
-    
+
+    @Test
+    public void findByNameTest()
+    {
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(courses);
+
+        List<Course> returnVal = repository.findByCourseName("Biology");
+        assertEquals(returnVal.get(0).getCourseName(),"Biology");
+    }
+
+    @Test
+    public void findByNameTest_fail()
+    {
+        List<Course> courses = new ArrayList<>();
+
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
+                .thenReturn(courses);
+        assertThrows(CourseNotFoundException.class, () -> repository.findByCourseName("Biology"));
+    }
+
+    @Test
+    public void findByIdTest()
+    {
+        Course course = new Course(9,"Biology","Science",
+                5,5,"WINTER2023");
+        when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class),anyInt()))
+                .thenReturn(course);
+
+        Course returnVal = repository.findById(9);
+        assertEquals(returnVal.getCourseName(),"Biology");
+    }
+
+    @Test
+    public void findByIdTest_fail()
+    {
+        Course course = new Course();
+
+        when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), anyInt()))
+                .thenReturn(course);
+        assertThrows(CourseNotFoundException.class, () -> repository.findById(9));
+    }
+
+    @Test
+    public void findBySubjectAreaTest()
+    {
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(courses);
+
+        List<Course> returnVal = repository.findBySubjectArea("Science");
+        assertEquals(returnVal.get(0).getCourseName(),"Biology");
+    }
+
+    @Test
+    public void findBySubjectAreaTest_fail()
+    {
+        List<Course> courses = new ArrayList<>();
+
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
+                .thenReturn(courses);
+        assertThrows(CourseNotFoundException.class, () -> repository.findBySubjectArea("WINTER2023"));
+    }
+
     @Test
     public void addCourseTest()
     {
