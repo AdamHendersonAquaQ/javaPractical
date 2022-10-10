@@ -1,8 +1,6 @@
 package com.aquaq.training.javaPractical.jdbc;
 
-import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Student;
-import com.aquaq.training.javaPractical.controllers.CourseController;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -82,42 +80,6 @@ public class StudentJdbcDao {
         student.setStudentId(keyHolder.getKey().intValue());
         return student;
     }
-
-    public String enrollStudent(int studentId, int courseId) {
-        //Get course info
-        CourseController courseController = new CourseController();
-        Course course = courseController.findCourseById(courseId);
-        //Check student semester credits
-//        int semesterCredits = getStudentCredits(course.getSemesterCode());
-        //Check course capacity
-
-        String sql = ("INSERT INTO StudentCourse (studentId, courseId) " +
-                "VALUES (?,?)");
-        int returnVal =  jdbcTemplate.update(c -> {
-            PreparedStatement ps = c
-                    .prepareStatement(sql);
-            ps.setInt(1,studentId);
-            ps.setInt(2,courseId);
-            return ps;
-        });
-        if(returnVal==1)
-            return "Student has been successfully registered";
-        else
-            throw new StudentNotFoundException("Student could not be registered in course");
-    }
-
-//    public int getStudentCredits(String semesterCode)
-//    {
-//        if (semesterCode.matches("^[A-Z]+[0-9]{4}$")) {
-//            List<Student> students = jdbcTemplate.query("", new BeanPropertyRowMapper(Student.class), semesterCode);
-//            if(students.size() == 0)
-//                throw new StudentNotFoundException("Not students found for semester - " + semesterCode);
-//            else
-//                return students;
-//        } else
-//            throw new StudentNotFoundException("Semester not found - " + semesterCode);
-//
-//    }
 }
 
 
