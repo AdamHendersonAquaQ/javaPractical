@@ -52,7 +52,11 @@ public class StudentJdbcDao {
 
     public List<Student> findBySemester(String semesterCode) {
         if (semesterCode.matches("^[A-Z]+[0-9]{4}$")) {
-            List<Student> students = jdbcTemplate.query("", new BeanPropertyRowMapper(Student.class), semesterCode);
+            List<Student> students = jdbcTemplate.query("SELECT DISTINCT Student.StudentId, FirstName, LastName, " +
+                    "GraduationYear, SemesterCode FROM Student LEFT JOIN StudentCourse ON " +
+                    "Student.StudentId = StudentCourse.StudentId LEFT JOIN Course ON " +
+                    "StudentCourse.CourseId = Course.CourseId WHERE Course.SemesterCode = ?",
+                    new BeanPropertyRowMapper(Student.class), semesterCode);
             if(students.size() == 0)
                 throw new StudentNotFoundException("Not students found for semester - " + semesterCode);
             else
