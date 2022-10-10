@@ -45,6 +45,11 @@ public class StudentController {
         return studentJdbcDao.addNewStudent(student);
     }
 
+    @PostMapping("/enrollStudent/")
+    public String enrollStudent(@RequestParam String studentId, @RequestParam String courseId) {
+        return studentJdbcDao.enrollStudent(Integer.parseInt(studentId), Integer.parseInt(courseId));
+    }
+
     @ExceptionHandler
     public ResponseEntity<StudentErrorResponse> handleStudentException(StudentNotFoundException exc) {
         return new ResponseEntity<>(new StudentErrorResponse(HttpStatus.NOT_FOUND.value(),
