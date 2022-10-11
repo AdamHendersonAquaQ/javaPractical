@@ -45,9 +45,9 @@ VALUES ('English Literature', 'English', 5, 5, 'WINTER2022');
 INSERT INTO Course (courseName, subjectArea, creditAmount, studentCapacity, semesterCode)
 VALUES ('Maths', 'Maths', 7, 3, 'AUTUMN2022');
 INSERT INTO Course (courseName, subjectArea, creditAmount, studentCapacity, semesterCode)
-VALUES ('Physics', 'Science', 5, 5, 'SPRING2023');
+VALUES ('Physics', 'Science', 5, 5, 'WINTER2022');
 INSERT INTO Course (courseName, subjectArea, creditAmount, studentCapacity, semesterCode)
-VALUES ('Chemistry', 'Science', 5, 5, 'SPRING2023');
+VALUES ('Chemistry', 'Science', 5, 5, 'WINTER2022');
 
 INSERT INTO StudentCourse (studentId, courseId)
 VALUES (1,1);
