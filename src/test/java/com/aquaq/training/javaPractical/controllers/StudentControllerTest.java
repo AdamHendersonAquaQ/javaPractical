@@ -1,5 +1,6 @@
 package com.aquaq.training.javaPractical.controllers;
 
+import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
@@ -99,5 +100,17 @@ public class StudentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/student/unenrollStudent/?studentId=1&courseId=1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Student has been successfully unenrolled."));
+    }
+
+    @Test
+    public void getCoursesBySemesterTest() throws Exception {
+        List<Course> courses = List.of(new Course(1,"Biology",
+                "Science",1,1,"WINTER2022"));
+
+        Mockito.when(studentJdbcDao.getCoursesBySemester(anyInt(),anyString()))
+                .thenReturn(courses);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/student/getCoursesBySemester/?studentId=1&semesterCode=WINTER2022"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].courseId",Matchers.equalTo(1)));
     }
 }

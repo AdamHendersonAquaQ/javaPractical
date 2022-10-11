@@ -3,6 +3,7 @@ package com.aquaq.training.javaPractical.jdbc;
 import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.CourseEnrollmentException;
+import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -103,7 +104,7 @@ public class StudentJdbcDao {
         if(courses.size()>0)
             return courses;
         else
-            throw new CourseEnrollmentException("No courses found for this student in semester "+semesterCode);
+            throw new CourseNotFoundException("No courses found for this student in semester "+semesterCode);
     }
 }
 

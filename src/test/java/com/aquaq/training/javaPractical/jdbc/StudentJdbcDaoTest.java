@@ -1,8 +1,10 @@
 package com.aquaq.training.javaPractical.jdbc;
 
 import com.aquaq.training.javaPractical.JavaPracticalApplication;
+import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.CourseEnrollmentException;
+import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -191,5 +193,26 @@ public class StudentJdbcDaoTest {
     {
         when(jdbcTemplate.update(anyString(),anyInt(),anyInt())).thenReturn(0);
         assertThrows(CourseEnrollmentException.class,() -> repository.unEnrollStudent(1,1));
+    }
+
+    @Test
+    public void getCoursesBySemesterTest()
+    {
+        List<Course> courses = List.of(new Course(1,"Biology",
+                "Science",1,1,"WINTER2022"));
+
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class), anyInt(),anyString()))
+                .thenReturn(courses);
+        List<Course> returnVal = repository.getCoursesBySemester(1,"WINTER2022");
+        assertEquals(returnVal.get(0).getCourseName(),"Biology");
+    }
+
+    @Test
+    public void getCoursesBySemesterTest_fail()
+    {
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class), anyInt(),anyString()))
+                .thenReturn(new ArrayList<Course>());
+        assertThrows(CourseNotFoundException.class,
+                ()->repository.getCoursesBySemester(1,"WINTER2022"));
     }
 }
