@@ -106,15 +106,15 @@ public class CourseJdbcDao {
             throw new CourseEnrollmentException("Student is already enrolled in this course");
     }
 
-    private boolean checkIfEnrolled(int studentId, int courseId)
+    public boolean checkIfEnrolled(int studentId, int courseId)
     {
         Integer courseCountVar = jdbcTemplate.queryForObject("SELECT Count(studentId) " +
                         "FROM studentCourse WHERE studentId = ? AND courseId = ?",
                 Integer.class, studentId, courseId );
-        return courseCountVar != null;
+        return courseCountVar != null && courseCountVar != 0;
     }
 
-    private int getCurrentCourseCapacity(int courseId) {
+    public int getCurrentCourseCapacity(int courseId) {
         Integer courseCountVar = jdbcTemplate.queryForObject("SELECT COUNT(studentId) " +
                         "AS capacityCount FROM StudentCourse WHERE courseId = ?",
                 Integer.class, courseId );
@@ -123,7 +123,7 @@ public class CourseJdbcDao {
         return courseCountVar;
     }
 
-    private int getStudentCredits(String semesterCode, int studentId)
+    public int getStudentCredits(String semesterCode, int studentId)
     {
         if (semesterCode.matches("^[A-Z]+[0-9]{4}$")) {
             Integer courseCountVar = jdbcTemplate.queryForObject("SELECT Sum(creditAmount) as courseCount" +
@@ -137,17 +137,11 @@ public class CourseJdbcDao {
             throw new CourseEnrollmentException("Semester not found - " + semesterCode);
     }
 
-    private String enrollStudentInCourse(int studentId, int courseId)
+    public String enrollStudentInCourse(int studentId, int courseId)
     {
         String sql = ("INSERT INTO StudentCourse (studentId, courseId) " +
                 "VALUES (?,?)");
-        int returnVal = jdbcTemplate.update(c -> {
-            PreparedStatement ps = c
-                    .prepareStatement(sql);
-            ps.setInt(1, studentId);
-            ps.setInt(2, courseId);
-            return ps;
-        });
+        int returnVal = jdbcTemplate.update(sql,studentId, courseId);
         if (returnVal == 1)
             return "Student has been successfully registered";
         else

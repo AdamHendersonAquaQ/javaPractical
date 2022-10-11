@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 public class CourseControllerTest {
@@ -109,5 +108,13 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseId", Matchers.equalTo(13)))
                 .andExpect(jsonPath("$.courseName",Matchers.equalTo("Biology")));
+    }
+
+    @Test
+    public void enrollStudentTest() throws Exception {
+        Mockito.when(courseJdbcDao.enrollStudent(anyInt(), anyInt())).thenReturn("Success");
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/course/enrollStudent/?courseId=1&studentId=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success"));
     }
 }
