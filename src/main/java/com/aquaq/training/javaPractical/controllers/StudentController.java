@@ -45,6 +45,12 @@ public class StudentController {
         return studentJdbcDao.addNewStudent(student);
     }
 
+    @DeleteMapping("/unenrollStudent")
+    public String unEnrollStudent(@RequestParam int courseId, @RequestParam int studentId)
+    {
+        return studentJdbcDao.unEnrollStudent(courseId,studentId);
+    }
+
     @ExceptionHandler
     public ResponseEntity<StudentErrorResponse> handleStudentException(StudentNotFoundException exc) {
         return new ResponseEntity<>(new StudentErrorResponse(HttpStatus.NOT_FOUND.value(),

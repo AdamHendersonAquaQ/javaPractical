@@ -76,6 +76,15 @@ public class StudentJdbcDao {
         student.setStudentId(keyHolder.getKey().intValue());
         return student;
     }
+
+    public String unEnrollStudent(int courseId, int studentId) {
+        String sql = "DELETE * FROM studentCourse WHERE studentId = ? AND courseId = ?";
+        int returnVal = jdbcTemplate.update(sql,courseId,studentId);
+        if(returnVal>0)
+            return "Student has been successfully unenrolled.";
+        else
+            throw new StudentNotFoundException("");
+    }
 }
 
 
