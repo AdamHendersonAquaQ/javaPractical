@@ -1,5 +1,6 @@
 package com.aquaq.training.javaPractical.controllers;
 
+import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.StudentErrorResponse;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
@@ -49,6 +50,12 @@ public class StudentController {
     public String unEnrollStudent(@RequestParam int courseId, @RequestParam int studentId)
     {
         return studentJdbcDao.unEnrollStudent(courseId,studentId);
+    }
+
+    @GetMapping("/getCoursesBySemester/")
+    public List<Course> getCoursesBySemester(@RequestParam int studentId, @RequestParam String semesterCode)
+    {
+        return studentJdbcDao.getCoursesBySemester(studentId,semesterCode);
     }
 
     @ExceptionHandler
