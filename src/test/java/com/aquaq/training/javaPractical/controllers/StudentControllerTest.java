@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 public class StudentControllerTest {
@@ -91,5 +90,14 @@ public class StudentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.studentId", Matchers.equalTo(13)))
                 .andExpect(jsonPath("$.firstName",Matchers.equalTo("Roberto")));
+    }
+
+    @Test
+    public void unEnrollStudentTest() throws Exception {
+        Mockito.when(studentJdbcDao.unEnrollStudent(anyInt(),anyInt()))
+                .thenReturn("Student has been successfully unenrolled.");
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/student/unenrollStudent/?studentId=1&courseId=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Student has been successfully unenrolled."));
     }
 }
