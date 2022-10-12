@@ -1,7 +1,9 @@
 package com.aquaq.training.javaPractical.jdbc;
 
+import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.CourseEnrollmentException;
+import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -89,6 +91,20 @@ public class StudentJdbcDao {
             return "Student has been successfully unenrolled.";
         else
             throw new CourseEnrollmentException("Student was not enrolled in this course.");
+    }
+
+    public List<Course> getCoursesBySemester(int studentId, String semesterCode)
+    {
+        String sql = "SELECT course.COURSEID, COURSENAME, SUBJECTAREA, CREDITAMOUNT, " +
+                "STUDENTCAPACITY,SEMESTERCODE FROM Course " +
+                "LEFT JOIN StudentCourse ON StudentCourse.courseId = Course.courseId " +
+                "WHERE studentId=? AND semesterCode=?";
+        List<Course> courses = jdbcTemplate.query(sql,new BeanPropertyRowMapper(Course.class),
+                studentId,semesterCode);
+        if(courses.size()>0)
+            return courses;
+        else
+            throw new CourseNotFoundException("No courses found for this student in semester "+semesterCode);
     }
 }
 
