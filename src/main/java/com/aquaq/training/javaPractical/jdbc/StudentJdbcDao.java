@@ -1,6 +1,7 @@
 package com.aquaq.training.javaPractical.jdbc;
 
 import com.aquaq.training.javaPractical.classes.Student;
+import com.aquaq.training.javaPractical.errorHandling.CourseEnrollmentException;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -79,6 +80,15 @@ public class StudentJdbcDao {
         },keyHolder);
         student.setStudentId(keyHolder.getKey().intValue());
         return student;
+    }
+
+    public String unEnrollStudent(int courseId, int studentId) {
+        String sql = "DELETE FROM studentCourse WHERE studentId = ? AND courseId = ?";
+        int returnVal = jdbcTemplate.update(sql,studentId,courseId);
+        if(returnVal>0)
+            return "Student has been successfully unenrolled.";
+        else
+            throw new CourseEnrollmentException("Student was not enrolled in this course.");
     }
 }
 

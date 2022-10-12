@@ -2,6 +2,7 @@ package com.aquaq.training.javaPractical.jdbc;
 
 import com.aquaq.training.javaPractical.JavaPracticalApplication;
 import com.aquaq.training.javaPractical.classes.Student;
+import com.aquaq.training.javaPractical.errorHandling.CourseEnrollmentException;
 import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -178,8 +179,17 @@ public class StudentJdbcDaoTest {
         assertEquals(keyHolderFactory.newKeyHolder().getClass(), GeneratedKeyHolder.class);
     }
 
+    @Test
+    public void unEnrollStudentTest()
+    {
+        when(jdbcTemplate.update(anyString(),anyInt(),anyInt())).thenReturn(1);
+        assertEquals("Student has been successfully unenrolled.",repository.unEnrollStudent(1,1));
+    }
 
-
-
-
+    @Test
+    public void unEnrollStudentTest_fail()
+    {
+        when(jdbcTemplate.update(anyString(),anyInt(),anyInt())).thenReturn(0);
+        assertThrows(CourseEnrollmentException.class,() -> repository.unEnrollStudent(1,1));
+    }
 }
