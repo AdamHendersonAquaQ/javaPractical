@@ -44,6 +44,32 @@ public class CourseControllerTest {
     }
 
     @Test
+    public void deleteCourseTest() throws Exception {
+        Mockito.when(courseJdbcDao.deleteCourse(anyInt()))
+                .thenReturn("Course has been successfully deleted.");
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/course/id/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Course has been successfully deleted."));
+    }
+
+    @Test
+    public void updateCourseTest() throws Exception {
+        Course course = new Course(9,"Biology","Science",
+                5,5,"WINTER2023");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(course);
+        Mockito.when(courseJdbcDao.updateCourse(any(Course.class))).thenReturn("Course has been successfully updated. ");
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/course/update/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Course has been successfully updated. "));
+
+    }
+
+    @Test
     public void findBySemesterTest() throws Exception {
         List<Course> courses = new ArrayList<>();
         courses.add(new Course(9,"Biology","Science",
