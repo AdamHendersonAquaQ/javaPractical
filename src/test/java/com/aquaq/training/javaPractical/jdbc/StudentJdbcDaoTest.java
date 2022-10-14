@@ -46,10 +46,8 @@ public class StudentJdbcDaoTest {
     {
         List<Student> students = new ArrayList<>();
         students.add(new Student(6,"Sean","Cassidy",2023));
-
         when(jdbcTemplate.query(anyString(), any(RowMapper.class)))
                 .thenReturn(students);
-
         List<Student> returnVal = repository.findAll();
         assertEquals(returnVal.size(),1);
         assertEquals(returnVal.get(0).getFirstName(),"Sean");
@@ -59,13 +57,48 @@ public class StudentJdbcDaoTest {
     public void findAllTest_fail()
     {
         List<Student> students = new ArrayList<>();
-
         when(jdbcTemplate.query(anyString(), any(RowMapper.class)))
                 .thenReturn(students);
-
         assertThrows(StudentNotFoundException.class, () -> repository.findAll());
     }
+    
+    @Test
+    public void deleteStudentTest() {
+        when(jdbcTemplate.update(anyString(), anyInt()))
+                .thenReturn(1);
+        assertEquals(repository.deleteStudent(2),"Student has been successfully deleted.");
+    }
 
+    @Test
+    public void deleteStudentTest_fail()
+    {
+        when(jdbcTemplate.update(anyString(), anyInt()))
+                .thenReturn(0);
+        assertThrows(StudentNotFoundException.class, () -> repository.deleteStudent(1));
+    }
+
+    @Test
+    public void updateStudentTest()
+    {
+        Student student = new Student(16,"Rachel","Summers",2034);
+        when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(), anyInt())).thenReturn(1);
+        assertEquals(repository.updateStudent(student),"Student has been successfully updated. ");
+    }
+
+    @Test
+    public void updateStudentTest_fail_invalidStudent() {
+        Student student = new Student();
+        assertThrows(StudentNotFoundException.class, () -> repository.updateStudent(student));
+    }
+
+    @Test
+    public void updateStudentTest_fail_noStudentFound() {
+        Student student = new Student(17,"Elizabeth","Braddock",2024);
+        when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(),
+                anyInt(), anyString(), anyInt())).thenReturn(0);
+        assertThrows(StudentNotFoundException.class, () -> repository.updateStudent(student));
+    }
+    
     @Test
     public void findByIdTest()
     {

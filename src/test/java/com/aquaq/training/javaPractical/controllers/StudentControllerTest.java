@@ -45,6 +45,30 @@ public class StudentControllerTest {
     }
 
     @Test
+    public void deleteStudentTest() throws Exception {
+        Mockito.when(studentJdbcDao.deleteStudent(anyInt()))
+                .thenReturn("Student has been successfully deleted.");
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/student/id/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Student has been successfully deleted."));
+    }
+
+    @Test
+    public void updateStudentTest() throws Exception {
+        Student student = new Student(15,"Douglas","Ramsey",2024);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(student);
+        Mockito.when(studentJdbcDao.updateStudent(any(Student.class))).thenReturn("Student has been successfully updated. ");
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/student/update/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Student has been successfully updated. "));
+    }
+
+    @Test
     public void findByIdTest() throws Exception {
         Student student = new Student(10,"Katherine","Pryde",2025);
         Mockito.when(studentJdbcDao.findById(anyInt())).thenReturn(student);

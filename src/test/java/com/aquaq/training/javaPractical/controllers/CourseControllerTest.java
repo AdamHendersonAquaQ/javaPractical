@@ -66,7 +66,6 @@ public class CourseControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Course has been successfully updated. "));
-
     }
 
     @Test

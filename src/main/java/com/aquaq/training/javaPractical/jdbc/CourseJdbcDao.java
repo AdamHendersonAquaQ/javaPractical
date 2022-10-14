@@ -26,14 +26,14 @@ public class CourseJdbcDao {
     @Autowired
     GeneratedKeyHolderFactory keyHolderFactory;
 
-    private final Logger logger = Logger.getLogger(CourseJdbcDao.class.getName());
+    private static final Logger logger = Logger.getLogger(CourseJdbcDao.class.getName());
 
     public List<Course> findAll() {
         logger.log(Level.INFO,"Finding all courses");
         List<Course> courses = jdbcTemplate.query("select * from Course",
                 new BeanPropertyRowMapper<>(Course.class));
         if (courses.size() == 0)
-            throw throwError("No courses found");
+            throw throwCourseError("No courses found");
         else
             return courses;
     }
@@ -47,12 +47,12 @@ public class CourseJdbcDao {
         if(returnVal>0)
             return "Course has been successfully deleted.";
         else
-            throw throwError("Course deletion with course id: " + courseId + " failed");
+            throw throwCourseError("Course deletion with course id: " + courseId + " failed");
     }
 
     public String updateCourse(Course course) {
         if(course.getCourseName()==null||course.getCourseName().isEmpty())
-            throw new CourseNotFoundException("Course cannot be set with no name");
+            throw throwCourseError("Course cannot be set with no name");
         logger.log(Level.INFO,"Updating course with id: " + course.getCourseId());
         String sql = ("UPDATE Course SET CourseName=?, subjectArea=?,creditAmount=?,studentCapacity=?," +
                 "semesterCode=? WHERE courseId=?");
@@ -62,7 +62,7 @@ public class CourseJdbcDao {
         if (returnVal == 1)
             return "Course has been successfully updated. ";
         else
-            throw throwError("Updating course with id: " + course.getCourseId() + " has failed");
+            throw throwCourseError("Updating course with id: " + course.getCourseId() + " has failed");
     }
 
     public List<Course> findBySemester(String semesterCode) {
@@ -72,7 +72,7 @@ public class CourseJdbcDao {
         if (courses.size() != 0)
             return courses;
         else
-            throw throwError("No courses found for semester: " + semesterCode);
+            throw throwCourseError("No courses found for semester: " + semesterCode);
     }
 
     public List<Course> findByCourseName(String courseName) {
@@ -82,7 +82,7 @@ public class CourseJdbcDao {
         if (courses.size() != 0)
             return courses;
         else
-            throw throwError("No courses found for name: " + courseName);
+            throw throwCourseError("No courses found for name: " + courseName);
     }
 
     public Course findById(int id) {
@@ -92,7 +92,7 @@ public class CourseJdbcDao {
         if (course != null && course.getCourseName() != null && !course.getCourseName().isEmpty())
             return course;
         else
-            throw throwError("No courses found for id: " + id);
+            throw throwCourseError("No courses found for id: " + id);
     }
 
     public List<Course> findBySubjectArea(String subjectArea) {
@@ -102,12 +102,12 @@ public class CourseJdbcDao {
         if (courses.size() != 0)
             return courses;
         else
-            throw throwError("No courses with this subject area found - " + subjectArea);
+            throw throwCourseError("No courses with this subject area found - " + subjectArea);
     }
     
     public Course addNewCourse(Course course) {
         if(course.getCourseName()==null||course.getCourseName().isEmpty())
-            throw throwError("Course cannot be created with no name");
+            throw throwCourseError("Course cannot be created with no name");
         KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
         String sql = ("INSERT INTO Course (courseName,subjectArea,creditAmount,studentCapacity,semesterCode) " +
                 "VALUES (?,?,?,?,?)");
@@ -138,13 +138,13 @@ public class CourseJdbcDao {
                 if (availableSpaces > 0)
                     return enrollStudentInCourse(studentId, courseId);
                 else
-                    throw throwCourseError("Student could not be added, course capacity has been reached. ");
+                    throw throwEnrollmentError("Student could not be added, course capacity has been reached. ");
             } else
-                throw throwCourseError("Adding student would exceed their maximum course credits by "
+                throw throwEnrollmentError("Adding student would exceed their maximum course credits by "
                         + (newSemesterCredits - 20));
         }
         else
-            throw throwCourseError("Student is already enrolled in this course");
+            throw throwEnrollmentError("Student is already enrolled in this course");
     }
 
     public boolean checkIfEnrolled(int studentId, int courseId)
@@ -178,7 +178,7 @@ public class CourseJdbcDao {
                 courseCountVar=0;
             return courseCountVar;
         } else
-            throw throwCourseError("Semester not found - " + semesterCode);
+            throw throwEnrollmentError("Semester not found - " + semesterCode);
     }
 
     public String enrollStudentInCourse(int studentId, int courseId)
@@ -190,16 +190,16 @@ public class CourseJdbcDao {
         if (returnVal == 1)
             return "Student has been successfully registered";
         else
-            throw throwCourseError("Student "+studentId+" could not be registered in course "+courseId);
+            throw throwEnrollmentError("Student "+studentId+" could not be registered in course "+courseId);
     }
 
-    private CourseNotFoundException throwError(String errorMsg)
+    public static CourseNotFoundException throwCourseError(String errorMsg)
     {
         logger.log(Level.WARNING, errorMsg);
         return new CourseNotFoundException(errorMsg);
     }
 
-    private CourseEnrollmentException throwCourseError(String errorMsg)
+    public static CourseEnrollmentException throwEnrollmentError(String errorMsg)
     {
         logger.log(Level.WARNING, errorMsg);
         return new CourseEnrollmentException(errorMsg);

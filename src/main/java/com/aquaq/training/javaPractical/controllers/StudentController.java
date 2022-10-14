@@ -25,6 +25,12 @@ public class StudentController {
         return studentJdbcDao.findAll();
     }
 
+    @DeleteMapping("/id/{id}")
+    public String deleteStudent(@PathVariable(value = "id") int id) {return studentJdbcDao.deleteStudent(id);}
+
+    @PostMapping("/update/")
+    public String updateStudent(@RequestBody Student student) { return studentJdbcDao.updateStudent(student);}
+
     @GetMapping("/id/{id}")
     public Student findStudentById(@PathVariable(value = "id") int id) {
         return studentJdbcDao.findById(id);
