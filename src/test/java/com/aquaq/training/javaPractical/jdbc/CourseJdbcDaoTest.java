@@ -67,6 +67,47 @@ public class CourseJdbcDaoTest {
     }
 
     @Test
+    public void deleteCourseTest()
+    {
+        when(jdbcTemplate.update(anyString(), anyInt()))
+                .thenReturn(1);
+        assertEquals(repository.deleteCourse(2),"Course has been successfully deleted.");
+    }
+
+    @Test
+    public void deleteCourseTest_fail()
+    {
+        when(jdbcTemplate.update(anyString(), anyInt()))
+                .thenReturn(0);
+        assertThrows(CourseNotFoundException.class, () -> repository.deleteCourse(1));
+    }
+
+    @Test
+    public void updateCourseTest()
+    {
+        Course course = new Course(9,"Biology","Science",
+                5,5,"WINTER2023");
+        when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(),
+                anyInt(), anyString(), anyInt())).thenReturn(1);
+        assertEquals(repository.updateCourse(course),"Course has been successfully updated. ");
+    }
+
+    @Test
+    public void updateCourseTest_fail_invalidCourse() {
+        Course course = new Course();
+        assertThrows(CourseNotFoundException.class, () -> repository.updateCourse(course));
+    }
+
+    @Test
+    public void updateCourseTest_fail_noCourseFound() {
+        Course course = new Course(9,"Biology","Science",
+                5,5,"WINTER2023");
+        when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(),
+                anyInt(), anyString(), anyInt())).thenReturn(0);
+        assertThrows(CourseNotFoundException.class, () -> repository.updateCourse(course));
+    }
+
+    @Test
     public void findBySemesterTest()
     {
         List<Course> courses = new ArrayList<>();

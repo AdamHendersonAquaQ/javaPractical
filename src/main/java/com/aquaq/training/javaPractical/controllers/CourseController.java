@@ -24,10 +24,21 @@ public class CourseController {
         return courseJdbcDao.findAll();
     }
 
+    @DeleteMapping("/id/{id}")
+    public String deleteCourse(@PathVariable(value = "id") int id) {
+        return courseJdbcDao.deleteCourse(id);
+    }
+
+    @PostMapping("/update/")
+    public String updateCourse(@RequestBody Course newCourse) {
+        return courseJdbcDao.updateCourse(newCourse);
+    }
+
     @GetMapping("/semester/{semesterCode}")
     public List<Course> findCourseBySemester(@PathVariable(value = "semesterCode") String semesterCode) {
         return courseJdbcDao.findBySemester(semesterCode);
     }
+
 
     @GetMapping("/name/{courseName}")
     public List<Course> findCourseByName(@PathVariable(value = "courseName") String courseName) {
