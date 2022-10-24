@@ -134,16 +134,6 @@ public class StudentJdbcDao {
             throw CourseJdbcDao.throwCourseError("No courses found for this student in semester "+semesterCode);
     }
     
-    public String unEnrollStudent(int courseId, int studentId) {
-        String sql = "DELETE FROM studentCourse WHERE studentId = ? AND courseId = ?";
-        logger.log(Level.INFO,"Unenrolling student " + studentId + " from course "+courseId);
-        int returnVal = jdbcTemplate.update(sql,studentId,courseId);
-        if(returnVal>0)
-            return "Student has been successfully unenrolled.";
-        else
-            throw CourseJdbcDao.throwEnrollmentError("Student was not enrolled in this course.");
-    }
-    
     public static StudentNotFoundException throwStudentError(String errorMsg)
     {
         logger.log(Level.WARNING, errorMsg);

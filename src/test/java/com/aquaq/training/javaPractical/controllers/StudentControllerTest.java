@@ -3,6 +3,7 @@ package com.aquaq.training.javaPractical.controllers;
 import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
+import com.aquaq.training.javaPractical.jdbc.EnrollmentJdbcDao;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -33,6 +34,8 @@ public class StudentControllerTest {
     private StudentJdbcDao studentJdbcDao;
     @MockBean
     private CourseJdbcDao courseJdbcDao;
+    @MockBean
+    private EnrollmentJdbcDao enrollmentJdbcDao;
 
     @Test
     public void findAllStudentsTest() throws Exception {
@@ -115,15 +118,6 @@ public class StudentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.studentId", Matchers.equalTo(13)))
                 .andExpect(jsonPath("$.firstName",Matchers.equalTo("Roberto")));
-    }
-
-    @Test
-    public void unEnrollStudentTest() throws Exception {
-        Mockito.when(studentJdbcDao.unEnrollStudent(anyInt(),anyInt()))
-                .thenReturn("Student has been successfully unenrolled.");
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/student/unenrollStudent/?studentId=1&courseId=1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Student has been successfully unenrolled."));
     }
 
     @Test

@@ -52,12 +52,6 @@ public class StudentController {
         return studentJdbcDao.addNewStudent(student);
     }
 
-    @DeleteMapping("/unenrollStudent")
-    public String unEnrollStudent(@RequestParam int courseId, @RequestParam int studentId)
-    {
-        return studentJdbcDao.unEnrollStudent(courseId,studentId);
-    }
-
     @GetMapping("/getCoursesBySemester/")
     public List<Course> getCoursesBySemester(@RequestParam int studentId, @RequestParam String semesterCode)
     {

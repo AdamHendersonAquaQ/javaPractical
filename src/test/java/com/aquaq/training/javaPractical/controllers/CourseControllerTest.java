@@ -2,6 +2,7 @@ package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
+import com.aquaq.training.javaPractical.jdbc.EnrollmentJdbcDao;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -31,6 +32,8 @@ public class CourseControllerTest {
     private CourseJdbcDao courseJdbcDao;
     @MockBean
     private StudentJdbcDao studentJdbcDao;
+    @MockBean
+    private EnrollmentJdbcDao enrollmentJdbcDao;
 
     @Test
     public void findAllCoursesTest() throws Exception {
@@ -133,13 +136,5 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseId", Matchers.equalTo(13)))
                 .andExpect(jsonPath("$.courseName",Matchers.equalTo("Biology")));
-    }
-
-    @Test
-    public void enrollStudentTest() throws Exception {
-        Mockito.when(courseJdbcDao.enrollStudent(anyInt(), anyInt())).thenReturn("Success");
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/course/enrollStudent/?courseId=1&studentId=1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Success"));
     }
 }

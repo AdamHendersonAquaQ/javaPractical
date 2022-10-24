@@ -1,7 +1,6 @@
 package com.aquaq.training.javaPractical.jdbc;
 
 import com.aquaq.training.javaPractical.classes.Course;
-import com.aquaq.training.javaPractical.errorHandling.CourseEnrollmentException;
 import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -128,80 +127,9 @@ public class CourseJdbcDao {
         return ps;
     }
 
-    public String enrollStudent(int studentId, int courseId) {
-        if(!checkIfEnrolled(studentId,courseId)) {
-            Course course = this.findById(courseId).get(0);
-            int semesterCredits = getStudentCredits(course.getSemesterCode(), studentId);
-            int newSemesterCredits = semesterCredits + course.getCreditAmount();
-            if (newSemesterCredits <= 20) {
-                int availableSpaces = course.getStudentCapacity() - getCurrentCourseCapacity(courseId);
-                if (availableSpaces > 0)
-                    return enrollStudentInCourse(studentId, courseId);
-                else
-                    throw throwEnrollmentError("Student could not be added, course capacity has been reached. ");
-            } else
-                throw throwEnrollmentError("Adding student would exceed their maximum course credits by "
-                        + (newSemesterCredits - 20));
-        }
-        else
-            throw throwEnrollmentError("Student is already enrolled in this course");
-    }
-
-    public boolean checkIfEnrolled(int studentId, int courseId)
-    {
-        logger.log(Level.INFO,"Checking if student already enrolled");
-        Integer courseCountVar = jdbcTemplate.queryForObject("SELECT Count(studentId) " +
-                        "FROM studentCourse WHERE studentId = ? AND courseId = ?",
-                Integer.class, studentId, courseId );
-        return courseCountVar != null && courseCountVar != 0;
-    }
-
-    public int getCurrentCourseCapacity(int courseId) {
-        logger.log(Level.INFO,"Getting current course capacity");
-        Integer courseCountVar = jdbcTemplate.queryForObject("SELECT COUNT(studentId) " +
-                        "AS capacityCount FROM StudentCourse WHERE courseId = ?",
-                Integer.class, courseId );
-        if(courseCountVar==null)
-            courseCountVar=0;
-        return courseCountVar;
-    }
-
-    public int getStudentCredits(String semesterCode, int studentId)
-    {
-        if (semesterCode.matches("^[A-Z]+[0-9]{4}$")) {
-            logger.log(Level.INFO,"Getting current student credits");
-            Integer courseCountVar = jdbcTemplate.queryForObject("SELECT Sum(creditAmount) as courseCount" +
-                            " FROM Course LEFT JOIN StudentCourse ON StudentCourse.courseId = Course.courseId" +
-                            " WHERE Course.SemesterCode = ? AND StudentId=?",
-                    Integer.class, semesterCode, studentId );
-            if(courseCountVar==null)
-                courseCountVar=0;
-            return courseCountVar;
-        } else
-            throw throwEnrollmentError("Semester not found - " + semesterCode);
-    }
-
-    public String enrollStudentInCourse(int studentId, int courseId)
-    {
-        logger.log(Level.INFO,"Enrolling student "+studentId+" in course "+courseId);
-        String sql = ("INSERT INTO StudentCourse (studentId, courseId) " +
-                "VALUES (?,?)");
-        int returnVal = jdbcTemplate.update(sql,studentId, courseId);
-        if (returnVal == 1)
-            return "Student has been successfully registered";
-        else
-            throw throwEnrollmentError("Student "+studentId+" could not be registered in course "+courseId);
-    }
-
     public static CourseNotFoundException throwCourseError(String errorMsg)
     {
         logger.log(Level.WARNING, errorMsg);
         return new CourseNotFoundException(errorMsg);
-    }
-
-    public static CourseEnrollmentException throwEnrollmentError(String errorMsg)
-    {
-        logger.log(Level.WARNING, errorMsg);
-        return new CourseEnrollmentException(errorMsg);
     }
 }

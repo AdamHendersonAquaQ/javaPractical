@@ -61,11 +61,6 @@ public class CourseController {
         return courseJdbcDao.addNewCourse(course);
     }
 
-    @PostMapping("/enrollStudent/")
-    public String enrollStudent(@RequestParam String studentId, @RequestParam String courseId) {
-        return courseJdbcDao.enrollStudent(Integer.parseInt(studentId), Integer.parseInt(courseId));
-    }
-
     @ExceptionHandler
     public ResponseEntity<CourseErrorResponse> handleCourseException(CourseNotFoundException exc) {
         return new ResponseEntity<>(new CourseErrorResponse(HttpStatus.NOT_FOUND.value(),
