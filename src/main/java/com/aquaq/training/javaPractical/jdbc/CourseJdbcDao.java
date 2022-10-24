@@ -85,12 +85,12 @@ public class CourseJdbcDao {
             throw throwCourseError("No courses found for name: " + courseName);
     }
 
-    public Course findById(int id) {
+    public List<Course> findById(int id) {
         logger.log(Level.INFO,"Finding courses for id " + id);
-        Course course = jdbcTemplate.queryForObject("select * from Course where courseId=?",
+        List<Course> courses = jdbcTemplate.query("select * from Course where courseId=?",
                 new BeanPropertyRowMapper<>(Course.class), id);
-        if (course != null && course.getCourseName() != null && !course.getCourseName().isEmpty())
-            return course;
+        if (courses.size()>0)
+            return courses;
         else
             throw throwCourseError("No courses found for id: " + id);
     }
@@ -124,13 +124,13 @@ public class CourseJdbcDao {
         ps.setString(2, course.getSubjectArea());
         ps.setInt(3, course.getCreditAmount());
         ps.setInt(4, course.getStudentCapacity());
-        ps.setInt(5, course.getStudentCapacity());
+        ps.setString(5, course.getSemesterCode());
         return ps;
     }
 
     public String enrollStudent(int studentId, int courseId) {
         if(!checkIfEnrolled(studentId,courseId)) {
-            Course course = this.findById(courseId);
+            Course course = this.findById(courseId).get(0);
             int semesterCredits = getStudentCredits(course.getSemesterCode(), studentId);
             int newSemesterCredits = semesterCredits + course.getCreditAmount();
             if (newSemesterCredits <= 20) {

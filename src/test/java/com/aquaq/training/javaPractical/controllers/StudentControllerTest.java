@@ -61,7 +61,7 @@ public class StudentControllerTest {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(student);
         Mockito.when(studentJdbcDao.updateStudent(any(Student.class))).thenReturn("Student has been successfully updated. ");
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/student/update/")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/student/update/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
@@ -70,20 +70,20 @@ public class StudentControllerTest {
 
     @Test
     public void findByIdTest() throws Exception {
-        Student student = new Student(10,"Katherine","Pryde",2025);
-        Mockito.when(studentJdbcDao.findById(anyInt())).thenReturn(student);
+        List<Student> students = List.of(new Student(10,"Katherine","Pryde",2025));
+        Mockito.when(studentJdbcDao.findById(anyInt())).thenReturn(students);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/student/id/10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName", Matchers.equalTo("Katherine")));
+                .andExpect(jsonPath("$[0].firstName", Matchers.equalTo("Katherine")));
     }
 
     @Test
     public void findByNameTest() throws Exception {
-        Student student = new Student(11,"Alex","Summers",2025);
-        Mockito.when(studentJdbcDao.findByStudentName(anyString(),anyString())).thenReturn(student);
+        List<Student> students = List.of(new Student(11,"Alex","Summers",2025));
+        Mockito.when(studentJdbcDao.findByStudentName(anyString(),anyString())).thenReturn(students);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/student/studentName/?firstName=Alex&lastName=Summers"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.studentId", Matchers.equalTo(11)));
+                .andExpect(jsonPath("$[0].studentId", Matchers.equalTo(11)));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class StudentControllerTest {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(inputStudent);
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/student/addStudent/")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/student/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())

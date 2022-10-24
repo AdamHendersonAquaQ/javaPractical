@@ -29,7 +29,7 @@ public class CourseController {
         return courseJdbcDao.deleteCourse(id);
     }
 
-    @PostMapping("/update/")
+    @PutMapping("/update/")
     public String updateCourse(@RequestBody Course newCourse) {
         return courseJdbcDao.updateCourse(newCourse);
     }
@@ -46,7 +46,7 @@ public class CourseController {
     }
 
     @GetMapping("/id/{id}")
-    public Course findCourseById(@PathVariable(value = "id") int id) {
+    public List<Course> findCourseById(@PathVariable(value = "id") int id) {
         return courseJdbcDao.findById(id);
     }
 
@@ -55,7 +55,7 @@ public class CourseController {
         return courseJdbcDao.findBySubjectArea(subjectArea);
     }
 
-    @PostMapping("/addCourse/")
+    @PostMapping()
     public Course addCourse(@RequestBody Course course)
     {
         return courseJdbcDao.addNewCourse(course);

@@ -61,7 +61,7 @@ public class CourseControllerTest {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(course);
         Mockito.when(courseJdbcDao.updateCourse(any(Course.class))).thenReturn("Course has been successfully updated. ");
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/course/update/")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/course/update/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
@@ -92,12 +92,12 @@ public class CourseControllerTest {
 
     @Test
     public void findByIdTest() throws Exception {
-        Course course = new Course(9,"Biology","Science",
-                5,5,"WINTER2023");
-        Mockito.when(courseJdbcDao.findById(anyInt())).thenReturn(course);
+        List<Course> courses = List.of(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        Mockito.when(courseJdbcDao.findById(anyInt())).thenReturn(courses);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/course/id/9"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseName", Matchers.equalTo("Biology")));
+                .andExpect(jsonPath("$[0].courseName", Matchers.equalTo("Biology")));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class CourseControllerTest {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(inputCourse);
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/course/addCourse/")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/course/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())

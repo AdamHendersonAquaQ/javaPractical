@@ -156,22 +156,22 @@ public class CourseJdbcDaoTest {
     @Test
     public void findByIdTest()
     {
-        Course course = new Course(9,"Biology","Science",
-                5,5,"WINTER2023");
-        when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class),anyInt()))
-                .thenReturn(course);
+        List<Course> courses = List.of(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyInt()))
+                .thenReturn(courses);
 
-        Course returnVal = repository.findById(9);
-        assertEquals(returnVal.getCourseName(),"Biology");
+        List<Course> returnVal = repository.findById(9);
+        assertEquals(returnVal.get(0).getCourseName(),"Biology");
     }
 
     @Test
     public void findByIdTest_fail()
     {
-        Course course = new Course();
+        List<Course> courses = new ArrayList<>();
 
-        when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), anyInt()))
-                .thenReturn(course);
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
+                .thenReturn(courses);
         assertThrows(CourseNotFoundException.class, () -> repository.findById(9));
     }
 
@@ -297,10 +297,10 @@ public class CourseJdbcDaoTest {
     @Test
     public void enrollStudentTest()
     {
-        Course testCourse = new Course(9,"Biology","Science",
-                5,5,"WINTER2023");
+        List<Course> testCourses = List.of(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
-        doReturn(testCourse).when(repository).findById(anyInt());
+        doReturn(testCourses).when(repository).findById(anyInt());
         doReturn(5).when(repository).getStudentCredits(anyString(),anyInt());
         doReturn(1).when(repository).getCurrentCourseCapacity(anyInt());
         doReturn("Student has been successfully registered").when(repository)
@@ -319,10 +319,10 @@ public class CourseJdbcDaoTest {
     @Test
     public void enrollStudentTest_fail_tooManySemesterCredits()
     {
-        Course testCourse = new Course(9,"Biology","Science",
-                5,5,"WINTER2023");
+        List<Course> testCourses = List.of(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
-        doReturn(testCourse).when(repository).findById(anyInt());
+        doReturn(testCourses).when(repository).findById(anyInt());
         doReturn(19).when(repository).getStudentCredits(anyString(),anyInt());
         assertThrows(CourseEnrollmentException.class,()->repository.enrollStudent(1,1));
     }
@@ -330,10 +330,10 @@ public class CourseJdbcDaoTest {
     @Test
     public void enrollStudentTest_fail_noAvailableSpaces()
     {
-        Course testCourse = new Course(9,"Biology","Science",
-                5,5,"WINTER2023");
+        List<Course> testCourses = List.of(new Course(9,"Biology","Science",
+                5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
-        doReturn(testCourse).when(repository).findById(anyInt());
+        doReturn(testCourses).when(repository).findById(anyInt());
         doReturn(5).when(repository).getStudentCredits(anyString(),anyInt());
         doReturn(10).when(repository).getCurrentCourseCapacity(anyInt());
         assertThrows(CourseEnrollmentException.class,()->repository.enrollStudent(1,1));

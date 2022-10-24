@@ -108,7 +108,7 @@ public class StudentJdbcDaoTest {
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyInt()))
                 .thenReturn(students);
 
-        Student returnVal = repository.findById(7);
+        Student returnVal = repository.findById(7).get(0);
         assertEquals(returnVal.getFirstName(),"Kurt");
         assertEquals(returnVal.getLastName(),"Wagner");
     }
@@ -132,7 +132,7 @@ public class StudentJdbcDaoTest {
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString(),anyString()))
                 .thenReturn(students);
 
-        Student returnVal = repository.findByStudentName("Ororo","Monroe");
+        Student returnVal = repository.findByStudentName("Ororo","Monroe").get(0);
         assertEquals(returnVal.getStudentId(),8);
         assertEquals(returnVal.getGraduationYear(),2023);
     }

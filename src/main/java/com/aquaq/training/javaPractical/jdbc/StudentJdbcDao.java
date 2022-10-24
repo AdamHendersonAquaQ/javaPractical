@@ -63,22 +63,22 @@ public class StudentJdbcDao {
             throw throwStudentError("Updating student with id: " + student.getStudentId() + " has failed");
     }
 
-    public Student findById(int id) {
+    public List<Student> findById(int id) {
         logger.log(Level.INFO,"Finding student with id: " + id);
         List<Student> students = jdbcTemplate.query("select * from Student where studentId=?",
                 new BeanPropertyRowMapper<>(Student.class), id);
         if (students.size() != 0)
-            return students.get(0);
+            return students;
         else
             throw throwStudentError("Student id not found - " + id);
     }
 
-    public Student findByStudentName(String firstName, String lastName) {
+    public List<Student> findByStudentName(String firstName, String lastName) {
         logger.log(Level.INFO,"Finding student with name: " + firstName+ " "+lastName);
         List<Student> students = jdbcTemplate.query("select * from Student where firstName = ? AND lastName = ?",
                 new BeanPropertyRowMapper<>(Student.class), firstName, lastName);
         if (students.size() != 0)
-            return students.get(0);
+            return students;
         else
             throw throwStudentError("Student name not found - " + firstName + " " + lastName);
     }
@@ -86,11 +86,11 @@ public class StudentJdbcDao {
     public List<Student> findBySemester(String semesterCode) {
         if (semesterCode.matches("^[A-Z]+[0-9]{4}$")) {
             logger.log(Level.INFO,"Finding student enrolled in semester: " + semesterCode);
-            List students = jdbcTemplate.query("SELECT DISTINCT Student.StudentId, FirstName, LastName, " +
+            List<Student> students = jdbcTemplate.query("SELECT DISTINCT Student.StudentId, FirstName, LastName, " +
                     "GraduationYear, SemesterCode FROM Student LEFT JOIN StudentCourse ON " +
                     "Student.StudentId = StudentCourse.StudentId LEFT JOIN Course ON " +
                     "StudentCourse.CourseId = Course.CourseId WHERE Course.SemesterCode = ?",
-                    new BeanPropertyRowMapper(Student.class), semesterCode);
+                    new BeanPropertyRowMapper<>(Student.class), semesterCode);
             if(students.size() != 0)
                 return students;
             else
@@ -126,7 +126,7 @@ public class StudentJdbcDao {
                 "STUDENTCAPACITY,SEMESTERCODE FROM Course " +
                 "LEFT JOIN StudentCourse ON StudentCourse.courseId = Course.courseId " +
                 "WHERE studentId=? AND semesterCode=?";
-        List courses = jdbcTemplate.query(sql,new BeanPropertyRowMapper(Course.class),
+        List<Course> courses = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(Course.class),
                 studentId,semesterCode);
         if(courses.size()>0)
             return courses;

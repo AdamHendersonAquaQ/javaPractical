@@ -28,16 +28,16 @@ public class StudentController {
     @DeleteMapping("/id/{id}")
     public String deleteStudent(@PathVariable(value = "id") int id) {return studentJdbcDao.deleteStudent(id);}
 
-    @PostMapping("/update/")
+    @PutMapping("/update/")
     public String updateStudent(@RequestBody Student student) { return studentJdbcDao.updateStudent(student);}
 
     @GetMapping("/id/{id}")
-    public Student findStudentById(@PathVariable(value = "id") int id) {
+    public List<Student> findStudentById(@PathVariable(value = "id") int id) {
         return studentJdbcDao.findById(id);
     }
 
     @GetMapping("/studentName/")
-    public Student findStudentByName(@RequestParam String firstName, @RequestParam String lastName) {
+    public List<Student> findStudentByName(@RequestParam String firstName, @RequestParam String lastName) {
         return studentJdbcDao.findByStudentName(firstName, lastName);
     }
 
@@ -46,7 +46,7 @@ public class StudentController {
         return studentJdbcDao.findBySemester(semesterCode);
     }
 
-    @PostMapping("/addStudent/")
+    @PostMapping()
     public Student addStudent(@RequestBody Student student)
     {
         return studentJdbcDao.addNewStudent(student);
