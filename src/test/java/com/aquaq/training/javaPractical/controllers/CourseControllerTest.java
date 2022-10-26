@@ -137,4 +137,16 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.courseId", Matchers.equalTo(13)))
                 .andExpect(jsonPath("$.courseName",Matchers.equalTo("Biology")));
     }
+
+    @Test
+    public void getCoursesBySemesterTest() throws Exception {
+        List<Course> courses = List.of(new Course(1,"Biology",
+                "Science",1,1,"WINTER2022"));
+
+        Mockito.when(courseJdbcDao.getCoursesBySemester(anyInt(),anyString()))
+                .thenReturn(courses);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/studentSemester/?studentId=1&semesterCode=WINTER2022"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].courseId",Matchers.equalTo(1)));
+    }
 }

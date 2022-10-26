@@ -61,6 +61,12 @@ public class CourseController {
         return courseJdbcDao.addNewCourse(course);
     }
 
+    @GetMapping("/studentSemester/")
+    public List<Course> getCoursesBySemester(@RequestParam int studentId, @RequestParam String semesterCode)
+    {
+        return courseJdbcDao.getCoursesBySemester(studentId,semesterCode);
+    }
+
     @ExceptionHandler
     public ResponseEntity<CourseErrorResponse> handleCourseException(CourseNotFoundException exc) {
         return new ResponseEntity<>(new CourseErrorResponse(HttpStatus.NOT_FOUND.value(),

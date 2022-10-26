@@ -127,6 +127,20 @@ public class CourseJdbcDao {
         return ps;
     }
 
+    public List<Course> getCoursesBySemester(int studentId, String semesterCode)
+    {
+        String sql = "SELECT course.COURSEID, COURSENAME, SUBJECTAREA, CREDITAMOUNT, " +
+                "STUDENTCAPACITY,SEMESTERCODE FROM Course " +
+                "LEFT JOIN StudentCourse ON StudentCourse.courseId = Course.courseId " +
+                "WHERE studentId=? AND semesterCode=?";
+        List<Course> courses = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(Course.class),
+                studentId,semesterCode);
+        if(courses.size()>0)
+            return courses;
+        else
+            throw throwCourseError("No courses found for this student in semester "+semesterCode);
+    }
+
     public static CourseNotFoundException throwCourseError(String errorMsg)
     {
         logger.log(Level.WARNING, errorMsg);

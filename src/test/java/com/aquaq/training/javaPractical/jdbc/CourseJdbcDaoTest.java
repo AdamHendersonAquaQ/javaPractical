@@ -221,4 +221,25 @@ public class CourseJdbcDaoTest {
         assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
     }
 
+    @Test
+    public void getCoursesBySemesterTest()
+    {
+        List<Course> courses = List.of(new Course(1,"Biology",
+                "Science",1,1,"WINTER2022"));
+
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class), anyInt(),anyString()))
+                .thenReturn(courses);
+        List<Course> returnVal = repository.getCoursesBySemester(1,"WINTER2022");
+        assertEquals(returnVal.get(0).getCourseName(),"Biology");
+    }
+
+    @Test
+    public void getCoursesBySemesterTest_fail()
+    {
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class), anyInt(),anyString()))
+                .thenReturn(new ArrayList<Course>());
+        assertThrows(CourseNotFoundException.class,
+                ()->repository.getCoursesBySemester(1,"WINTER2022"));
+    }
+
 }
