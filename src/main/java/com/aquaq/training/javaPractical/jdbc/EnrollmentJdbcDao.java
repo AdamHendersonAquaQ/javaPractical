@@ -21,6 +21,9 @@ public class EnrollmentJdbcDao {
     @Autowired
     CourseJdbcDao courseJdbcDao;
 
+    @Autowired
+    StudentJdbcDao studentJdbcDao;
+
     private static final Logger logger = Logger.getLogger(CourseJdbcDao.class.getName());
 
     public List<Enrollment> findAll() {
@@ -69,6 +72,7 @@ public class EnrollmentJdbcDao {
 
     public String enrollStudent(int studentId, int courseId) {
         if(!checkIfEnrolled(studentId,courseId)) {
+            studentJdbcDao.findById(studentId);
             Course course = courseJdbcDao.findById(courseId).get(0);
             int semesterCredits = getStudentCredits(course.getSemesterCode(), studentId);
             int newSemesterCredits = semesterCredits + course.getCreditAmount();

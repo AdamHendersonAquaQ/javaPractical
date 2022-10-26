@@ -3,6 +3,7 @@ package com.aquaq.training.javaPractical.jdbc;
 import com.aquaq.training.javaPractical.JavaPracticalApplication;
 import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.classes.Enrollment;
+import com.aquaq.training.javaPractical.classes.Student;
 import com.aquaq.training.javaPractical.errorHandling.CourseEnrollmentException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,8 @@ public class EnrollmentJdbcDaoTest {
     EnrollmentJdbcDao repository;
     @Mock
     CourseJdbcDao courseRepository;
+    @Mock
+    StudentJdbcDao studentRepository;
     @Mock
     JdbcTemplate jdbcTemplate;
 
@@ -177,6 +180,7 @@ public class EnrollmentJdbcDaoTest {
         List<Course> testCourses = List.of(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
+        doReturn(new Student()).when(studentRepository).findById(anyInt());
         doReturn(testCourses).when(courseRepository).findById(anyInt());
         doReturn(5).when(repository).getStudentCredits(anyString(),anyInt());
         doReturn(1).when(repository).getCurrentCourseCapacity(anyInt());
@@ -199,6 +203,7 @@ public class EnrollmentJdbcDaoTest {
         List<Course> testCourses = List.of(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
+        doReturn(new Student()).when(studentRepository).findById(anyInt());
         doReturn(testCourses).when(courseRepository).findById(anyInt());
         doReturn(19).when(repository).getStudentCredits(anyString(),anyInt());
         assertThrows(CourseEnrollmentException.class,()->repository.enrollStudent(1,1));
@@ -210,6 +215,7 @@ public class EnrollmentJdbcDaoTest {
         List<Course> testCourses = List.of(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
+        doReturn(new Student()).when(studentRepository).findById(anyInt());
         doReturn(testCourses).when(courseRepository).findById(anyInt());
         doReturn(5).when(repository).getStudentCredits(anyString(),anyInt());
         doReturn(10).when(repository).getCurrentCourseCapacity(anyInt());
