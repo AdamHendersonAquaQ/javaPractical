@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -101,6 +102,8 @@ public class StudentJdbcDao {
     public Student addNewStudent(Student student) {
         if(student.getFirstName()==null||student.getFirstName().isEmpty())
             throw throwStudentError("Student cannot be created with no first name");
+        if(student.getGraduationYear()< LocalDateTime.now().getYear())
+            throw throwStudentError("Student graduation year must be in the future");
         KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
         String sql = ("INSERT INTO Student (firstName,lastName,graduationYear) " +
                 "VALUES (?,?,?)");

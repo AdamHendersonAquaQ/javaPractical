@@ -38,9 +38,10 @@ public class CourseJdbcDao {
     }
 
     public String deleteCourse(int courseId) {
-        logger.log(Level.INFO,"Deleting course id: "+courseId);
+        logger.log(Level.INFO,"Deleting enrollments for course id: "+courseId);
         String sql = "DELETE FROM studentCourse WHERE courseId = ?";
         jdbcTemplate.update(sql,courseId);
+        logger.log(Level.INFO,"Deleting course id: "+courseId);
         sql = "DELETE FROM Course WHERE courseId = ?";
         int returnVal = jdbcTemplate.update(sql,courseId);
         if(returnVal>0)
