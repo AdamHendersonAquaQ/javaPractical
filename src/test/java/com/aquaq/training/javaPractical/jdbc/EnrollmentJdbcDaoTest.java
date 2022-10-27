@@ -180,7 +180,7 @@ public class EnrollmentJdbcDaoTest {
         List<Course> testCourses = List.of(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
-        doReturn(new Student()).when(studentRepository).findById(anyInt());
+        when(studentRepository.findById(anyInt())).thenReturn(List.of(new Student()));
         doReturn(testCourses).when(courseRepository).findById(anyInt());
         doReturn(5).when(repository).getStudentCredits(anyString(),anyInt());
         doReturn(1).when(repository).getCurrentCourseCapacity(anyInt());
@@ -203,7 +203,7 @@ public class EnrollmentJdbcDaoTest {
         List<Course> testCourses = List.of(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
-        doReturn(new Student()).when(studentRepository).findById(anyInt());
+        when(studentRepository.findById(anyInt())).thenReturn(List.of(new Student()));
         doReturn(testCourses).when(courseRepository).findById(anyInt());
         doReturn(19).when(repository).getStudentCredits(anyString(),anyInt());
         assertThrows(CourseEnrollmentException.class,()->repository.enrollStudent(1,1));
@@ -215,7 +215,7 @@ public class EnrollmentJdbcDaoTest {
         List<Course> testCourses = List.of(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
         doReturn(false).when(repository).checkIfEnrolled(anyInt(),anyInt());
-        doReturn(new Student()).when(studentRepository).findById(anyInt());
+        when(studentRepository.findById(anyInt())).thenReturn(List.of(new Student()));
         doReturn(testCourses).when(courseRepository).findById(anyInt());
         doReturn(5).when(repository).getStudentCredits(anyString(),anyInt());
         doReturn(10).when(repository).getCurrentCourseCapacity(anyInt());

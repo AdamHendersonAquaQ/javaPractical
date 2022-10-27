@@ -215,10 +215,40 @@ public class CourseJdbcDaoTest {
     }
 
     @Test
-    public void addCourseTest_fail()
+    public void addCourseTest_fail_noName()
     {
         Course course = new Course();
         assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
+    }
+
+    @Test
+    public void addCourseTest_fail_creditAmountLessThanZero()
+    {
+        KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
+        when(jdbcTemplate.update(anyString(),any(MapSqlParameterSource.class),any(KeyHolder.class))).thenReturn(1);
+        when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
+        Course inputCourse = new Course(0,"Biology","Science",-1,10,"WINTER2023");
+        assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(inputCourse));
+    }
+
+    @Test
+    public void addCourseTest_fail_creditAmountGreaterThan20()
+    {
+        KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
+        when(jdbcTemplate.update(anyString(),any(MapSqlParameterSource.class),any(KeyHolder.class))).thenReturn(1);
+        when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
+        Course inputCourse = new Course(0,"Biology","Science",21,10,"WINTER2023");
+        assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(inputCourse));
+    }
+
+    @Test
+    public void addCourseTest_fail_studentCapacityLessThanZero()
+    {
+        KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
+        when(jdbcTemplate.update(anyString(),any(MapSqlParameterSource.class),any(KeyHolder.class))).thenReturn(1);
+        when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
+        Course inputCourse = new Course(0,"Biology","Science",5,-5,"WINTER2023");
+        assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(inputCourse));
     }
 
     @Test

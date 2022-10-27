@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,8 +52,7 @@ public class StudentJdbcDao {
     }
 
     public String updateStudent(Student student) {
-        if(student.getFirstName()==null||student.getFirstName().isEmpty())
-            throw throwStudentError("Student cannot be set with no first name");
+        checkStudent(student);
         logger.log(Level.INFO,"Updating student with id: " + student.getStudentId());
         String sql = ("UPDATE Student SET firstName=?, lastName=?,graduationYear=? WHERE studentId=?");
         int returnVal = jdbcTemplate.update(sql, student.getFirstName(), student.getLastName(),
@@ -74,9 +74,16 @@ public class StudentJdbcDao {
     }
 
     public List<Student> findByStudentName(String firstName, String lastName) {
+        List<Student> students;
         logger.log(Level.INFO,"Finding student with name: " + firstName+ " "+lastName);
-        List<Student> students = jdbcTemplate.query("select * from Student where firstName = ? AND lastName = ?",
-                new BeanPropertyRowMapper<>(Student.class), firstName, lastName);
+        if(Objects.equals(firstName, "") && !Objects.equals(lastName, ""))
+            students = jdbcTemplate.query("select * from Student where lastName = ?", new BeanPropertyRowMapper<>(Student.class), lastName);
+        else if(!Objects.equals(firstName, "") && Objects.equals(lastName, ""))
+            students = jdbcTemplate.query("select * from Student where firstName = ?", new BeanPropertyRowMapper<>(Student.class), firstName);
+        else if (!Objects.equals(firstName, "") && !Objects.equals(lastName, ""))
+            students = jdbcTemplate.query("select * from Student where firstName = ? AND lastName = ?", new BeanPropertyRowMapper<>(Student.class), firstName, lastName);
+        else
+            throw throwStudentError("At least one name field must not be blank");
         if (students.size() != 0)
             return students;
         else
@@ -100,17 +107,21 @@ public class StudentJdbcDao {
     }
 
     public Student addNewStudent(Student student) {
-        if(student.getFirstName()==null||student.getFirstName().isEmpty())
-            throw throwStudentError("Student cannot be created with no first name");
-        if(student.getGraduationYear()< LocalDateTime.now().getYear())
-            throw throwStudentError("Student graduation year must be in the future");
+        checkStudent(student);
         KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
         String sql = ("INSERT INTO Student (firstName,lastName,graduationYear) " +
                 "VALUES (?,?,?)");
         logger.log(Level.INFO,"Adding new student");
         jdbcTemplate.update(c -> prepareStatement(sql,c,student),keyHolder);
-        student.setStudentId(keyHolder.getKey().intValue());
+        student.setStudentId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         return student;
+    }
+
+    public void checkStudent(Student student) {
+        if(student.getFirstName()==null||student.getFirstName().isEmpty())
+            throw throwStudentError("Student cannot be created with no first name");
+        if(student.getGraduationYear()< LocalDateTime.now().getYear())
+            throw throwStudentError("Student graduation year must be in the future");
     }
 
     private PreparedStatement prepareStatement(String sql, Connection c, Student student) throws SQLException {

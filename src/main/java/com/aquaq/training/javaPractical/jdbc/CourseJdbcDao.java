@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,8 +52,7 @@ public class CourseJdbcDao {
     }
 
     public String updateCourse(Course course) {
-        if(course.getCourseName()==null||course.getCourseName().isEmpty())
-            throw throwCourseError("Course cannot be set with no name");
+        courseChecks(course);
         logger.log(Level.INFO,"Updating course with id: " + course.getCourseId());
         String sql = ("UPDATE Course SET CourseName=?, subjectArea=?,creditAmount=?,studentCapacity=?," +
                 "semesterCode=? WHERE courseId=?");
@@ -106,14 +106,13 @@ public class CourseJdbcDao {
     }
     
     public Course addNewCourse(Course course) {
-        if(course.getCourseName()==null||course.getCourseName().isEmpty())
-            throw throwCourseError("Course cannot be created with no name");
+        courseChecks(course);
         KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
         String sql = ("INSERT INTO Course (courseName,subjectArea,creditAmount,studentCapacity,semesterCode) " +
                 "VALUES (?,?,?,?,?)");
         logger.log(Level.INFO,"Adding new course");
         jdbcTemplate.update(c -> prepareStatement(sql,c,course),keyHolder);
-        course.setCourseId(keyHolder.getKey().intValue());
+        course.setCourseId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         return course;
     }
 
@@ -140,6 +139,17 @@ public class CourseJdbcDao {
             return courses;
         else
             throw throwCourseError("No courses found for this student in semester "+semesterCode);
+    }
+
+    public void courseChecks(Course course) {
+        if(course.getCourseName()==null||course.getCourseName().isEmpty())
+            throw throwCourseError("Course cannot be created with no name");
+        if(course.getCreditAmount()<0)
+            throw throwCourseError("Course credit amount cannot be less than 0");
+        else if(course.getCreditAmount()>20)
+            throw throwCourseError("Course credit amount cannot exceed 20");
+        if(course.getStudentCapacity()<0)
+            throw throwCourseError("Student capacity cannot be less than 0");
     }
 
     public static CourseNotFoundException throwCourseError(String errorMsg)

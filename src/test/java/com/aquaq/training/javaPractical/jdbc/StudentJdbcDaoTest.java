@@ -99,12 +99,9 @@ public class StudentJdbcDaoTest {
     @Test
     public void findByIdTest()
     {
-        List<Student> students = new ArrayList<>();
-        students.add(new Student(7,"Kurt","Wagner",2023));
-
+        List<Student> students = List.of(new Student(7,"Kurt","Wagner",2023));
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyInt()))
                 .thenReturn(students);
-
         Student returnVal = repository.findById(7).get(0);
         assertEquals(returnVal.getFirstName(),"Kurt");
         assertEquals(returnVal.getLastName(),"Wagner");
@@ -114,36 +111,61 @@ public class StudentJdbcDaoTest {
     public void findByIdTest_fail()
     {
         List<Student> students = new ArrayList<>();
-
         when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
                 .thenReturn(students);
         assertThrows(StudentNotFoundException.class, () -> repository.findById(8));
     }
 
     @Test
-    public void findByNameTest()
+    public void findByNameTest_twoNames()
     {
-        List<Student> students = new ArrayList<>();
-        students.add(new Student(8,"Ororo","Monroe",2023));
-
+        List<Student> students = List.of(new Student(8,"Ororo","Monroe",2023));
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString(),anyString()))
                 .thenReturn(students);
-
         Student returnVal = repository.findByStudentName("Ororo","Monroe").get(0);
         assertEquals(returnVal.getStudentId(),8);
         assertEquals(returnVal.getGraduationYear(),2023);
     }
 
     @Test
-    public void findByNameTest_fail()
+    public void findByNameTest_onlyFirstName()
+    {
+        List<Student> students = List.of(new Student(8,"Ororo","Monroe",2023));
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(students);
+        Student returnVal = repository.findByStudentName("Ororo","").get(0);
+        assertEquals(returnVal.getStudentId(),8);
+        assertEquals(returnVal.getGraduationYear(),2023);
+    }
+
+    @Test
+    public void findByNameTest_onlyLastName()
+    {
+        List<Student> students = List.of(new Student(8,"Ororo","Monroe",2023));
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(students);
+        Student returnVal = repository.findByStudentName("","Monroe").get(0);
+        assertEquals(returnVal.getStudentId(),8);
+        assertEquals(returnVal.getGraduationYear(),2023);
+    }
+
+    @Test
+    public void findByNameTest_fail_noNames()
+    {
+        List<Student> students = List.of(new Student(8,"Ororo","Monroe",2023));
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
+                .thenReturn(students);
+        assertThrows(StudentNotFoundException.class, () -> repository.findByStudentName("",""));
+
+    }
+
+    @Test
+    public void findByNameTest_fail_noReturn()
     {
         List<Student> students = new ArrayList<>();
-
         when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString(),anyString()))
                 .thenReturn(students);
-
         assertThrows(StudentNotFoundException.class, () -> repository.findByStudentName("Shiro","Yashida"));
-
     }
 
     @Test
@@ -198,10 +220,19 @@ public class StudentJdbcDaoTest {
     }
 
     @Test
-    public void addStudentTest_fail()
+    public void addStudentTest_fail_noFirstName()
     {
         Student student = new Student();
         assertThrows(StudentNotFoundException.class, () -> repository.addNewStudent(student));
+    }
+
+    @Test
+    public void addStudentTest_fail_pastGradYear() {
+        KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
+        when(jdbcTemplate.update(anyString(), any(MapSqlParameterSource.class), any(KeyHolder.class))).thenReturn(1);
+        when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
+        Student inputStudent = new Student(0, "Scott", "Summmers", 1963);
+        assertThrows(StudentNotFoundException.class, () -> repository.addNewStudent(inputStudent));
     }
 
     @Test
