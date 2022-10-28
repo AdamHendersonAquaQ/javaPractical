@@ -70,6 +70,22 @@ public class EnrollmentJdbcDao {
             return records;
     }
 
+    public List<Enrollment> findEnrollment(int studentId, int courseId) {
+        logger.log(Level.INFO,"Finding all enrollment record for course " + courseId + "and student " + studentId);
+        List<Enrollment> records = jdbcTemplate.query("SELECT " +
+                        "StudentCourse.studentId, firstName, lastName, StudentCourse.courseId, courseName " +
+                        "FROM StudentCourse " +
+                        "LEFT JOIN Student ON Student.studentId = StudentCourse.studentId " +
+                        "LEFT JOIN Course ON Course.courseId = StudentCourse.courseId " +
+                        "WHERE StudentCourse.courseId = ? AND StudentCourse.studentId = ?",
+                new BeanPropertyRowMapper<>(Enrollment.class), courseId, studentId);
+        if (records.size() == 0)
+            throw throwEnrollmentError("No enrollments found for course " + courseId + " and student " + studentId);
+        else
+            return records;
+
+    }
+
     public String enrollStudent(int studentId, int courseId) {
         if(!checkIfEnrolled(studentId,courseId)) {
             studentJdbcDao.findById(studentId);
@@ -151,6 +167,5 @@ public class EnrollmentJdbcDao {
         logger.log(Level.WARNING, errorMsg);
         return new CourseEnrollmentException(errorMsg);
     }
-
 
 }

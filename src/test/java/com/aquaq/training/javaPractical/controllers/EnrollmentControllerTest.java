@@ -71,6 +71,17 @@ public class EnrollmentControllerTest {
     }
 
     @Test
+    public void getEnrollmentTest() throws Exception {
+        List<Enrollment> records = new ArrayList<>();
+        records.add(new Enrollment(22,"Jonothan","Starsmore",
+                5,"History"));
+        Mockito.when(enrollmentJdbcDao.findEnrollment(anyInt(),anyInt())).thenReturn(records);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/enrollment/record/?studentId=22&courseId=5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].courseName", Matchers.equalTo("History")));
+    }
+
+    @Test
     public void enrollStudentTest() throws Exception {
         Mockito.when(enrollmentJdbcDao.enrollStudent(anyInt(), anyInt())).thenReturn("Success");
         mockMvc.perform(MockMvcRequestBuilders.post("/api/enrollment/?courseId=1&studentId=1"))

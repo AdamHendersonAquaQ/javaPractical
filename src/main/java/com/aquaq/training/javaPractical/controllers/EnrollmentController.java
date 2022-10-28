@@ -32,9 +32,14 @@ public class EnrollmentController {
         return enrollmentJdbcDao.findByCourse(id);
     }
 
+    @GetMapping("/record/")
+    public List<Enrollment> getEnrollment(@RequestParam int studentId, @RequestParam int courseId) {
+        return enrollmentJdbcDao.findEnrollment(studentId,courseId);
+    }
+
     @PostMapping()
-    public String enrollStudent(@RequestParam String studentId, @RequestParam String courseId) {
-        return enrollmentJdbcDao.enrollStudent(Integer.parseInt(studentId), Integer.parseInt(courseId));
+    public String enrollStudent(@RequestParam int studentId, @RequestParam int courseId) {
+        return enrollmentJdbcDao.enrollStudent(studentId, courseId);
     }
 
     @DeleteMapping()

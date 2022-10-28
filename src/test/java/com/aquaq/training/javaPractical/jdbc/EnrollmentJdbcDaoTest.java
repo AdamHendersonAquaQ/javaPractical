@@ -103,6 +103,25 @@ public class EnrollmentJdbcDaoTest {
     }
 
     @Test
+    public void findRecord()
+    {
+        List<Enrollment> records = List.of(new Enrollment(24,"Angelo","Espinosa",5,"History"));
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt(), anyInt()))
+                .thenReturn(records);
+        List<Enrollment> returnVal = repository.findEnrollment(24,5);
+        assertEquals(returnVal.size(),1);
+        assertEquals(returnVal.get(0).getFirstName(),"Angelo");
+    }
+
+    @Test
+    public void findRecord_fail()
+    {
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt(), anyInt()))
+                .thenReturn(new ArrayList<>());
+        assertThrows(CourseEnrollmentException.class, () -> repository.findEnrollment(1,1));
+    }
+
+    @Test
     public void enrollStudentInCourseTest()
     {
         when(jdbcTemplate.update(anyString(),anyInt(),anyInt())).thenReturn(1);
