@@ -1,8 +1,8 @@
 package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Course;
-import com.aquaq.training.javaPractical.errorHandling.CourseErrorResponse;
 import com.aquaq.training.javaPractical.errorHandling.CourseNotFoundException;
+import com.aquaq.training.javaPractical.errorHandling.EnrollmentErrorResponse;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -68,14 +68,14 @@ public class CourseController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<CourseErrorResponse> handleCourseException(CourseNotFoundException exc) {
-        return new ResponseEntity<>(new CourseErrorResponse(HttpStatus.NOT_FOUND.value(),
+    public ResponseEntity<EnrollmentErrorResponse> handleCourseException(CourseNotFoundException exc) {
+        return new ResponseEntity<>(new EnrollmentErrorResponse(HttpStatus.NOT_FOUND.value(),
                 exc.getMessage(),System.currentTimeMillis()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    public ResponseEntity<CourseErrorResponse> handleException(Exception exc) {
-        return new ResponseEntity<>(new CourseErrorResponse(HttpStatus.BAD_REQUEST.value(),
+    public ResponseEntity<EnrollmentErrorResponse> handleException(Exception exc) {
+        return new ResponseEntity<>(new EnrollmentErrorResponse(HttpStatus.BAD_REQUEST.value(),
                 exc.getMessage(),System.currentTimeMillis()), HttpStatus.BAD_REQUEST);
     }
 
