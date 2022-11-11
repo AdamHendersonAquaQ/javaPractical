@@ -48,7 +48,7 @@ public class StudentJdbcDao {
         if(returnVal>0)
             return "Student has been successfully deleted.";
         else
-            throw throwStudentError("Student deletion with student id: " + studentId + " failed");
+            throw throwStudentError("Student deletion with Student ID: " + studentId + " failed");
     }
 
     public String updateStudent(Student student) {
@@ -60,7 +60,7 @@ public class StudentJdbcDao {
         if (returnVal == 1)
             return "Student has been successfully updated. ";
         else
-            throw throwStudentError("Updating student with id: " + student.getStudentId() + " has failed");
+            throw throwStudentError("Updating student with ID: " + student.getStudentId() + " has failed");
     }
 
     public List<Student> findById(int id) {
@@ -70,7 +70,7 @@ public class StudentJdbcDao {
         if (students.size() != 0)
             return students;
         else
-            throw throwStudentError("Student id not found - " + id);
+            throw throwStudentError("Student ID not found - " + id);
     }
 
     public List<Student> findByStudentName(String firstName, String lastName) {
@@ -101,7 +101,7 @@ public class StudentJdbcDao {
             if(students.size() != 0)
                 return students;
             else
-                throw throwStudentError("Not students found for semester - " + semesterCode);
+                throw throwStudentError("Not students found for Semester - " + semesterCode);
         } else
             throw throwStudentError("Semester not found - " + semesterCode);
     }

@@ -48,7 +48,7 @@ public class CourseJdbcDao {
         if(returnVal>0)
             return "Course has been successfully deleted.";
         else
-            throw throwCourseError("Course deletion with course id: " + courseId + " failed");
+            throw throwCourseError("Course deletion with Course ID: " + courseId + " failed");
     }
 
     public String updateCourse(Course course) {
@@ -62,7 +62,7 @@ public class CourseJdbcDao {
         if (returnVal == 1)
             return "Course has been successfully updated. ";
         else
-            throw throwCourseError("Updating course with id: " + course.getCourseId() + " has failed");
+            throw throwCourseError("Updating course with ID: " + course.getCourseId() + " has failed");
     }
 
     public List<Course> findBySemester(String semesterCode) {
@@ -92,7 +92,7 @@ public class CourseJdbcDao {
         if (courses.size()>0)
             return courses;
         else
-            throw throwCourseError("No courses found for id: " + id);
+            throw throwCourseError("No courses found for ID: " + id);
     }
 
     public List<Course> findBySubjectArea(String subjectArea) {
@@ -138,7 +138,7 @@ public class CourseJdbcDao {
         if(courses.size()>0)
             return courses;
         else
-            throw throwCourseError("No courses found for this student in semester "+semesterCode);
+            throw throwCourseError("No courses found for this student in Semester "+semesterCode);
     }
 
     public void courseChecks(Course course) {

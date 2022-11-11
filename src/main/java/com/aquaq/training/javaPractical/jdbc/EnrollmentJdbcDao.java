@@ -50,7 +50,7 @@ public class EnrollmentJdbcDao {
                         "WHERE StudentCourse.studentId = ?",
                 new BeanPropertyRowMapper<>(Enrollment.class), id);
         if (records.size() == 0)
-            throw throwEnrollmentError("No enrollments found for id " +id);
+            throw throwEnrollmentError("No enrollments found for Student ID: " +id);
         else
             return records;
     }
@@ -65,7 +65,7 @@ public class EnrollmentJdbcDao {
                         "WHERE StudentCourse.courseId = ?",
                 new BeanPropertyRowMapper<>(Enrollment.class), id);
         if (records.size() == 0)
-            throw throwEnrollmentError("No enrollments found for id " +id);
+            throw throwEnrollmentError("No enrollments found for Student ID: " +id);
         else
             return records;
     }
@@ -80,7 +80,7 @@ public class EnrollmentJdbcDao {
                         "WHERE StudentCourse.courseId = ? AND StudentCourse.studentId = ?",
                 new BeanPropertyRowMapper<>(Enrollment.class), courseId, studentId);
         if (records.size() == 0)
-            throw throwEnrollmentError("No enrollments found for course " + courseId + " and student " + studentId);
+            throw throwEnrollmentError("No enrollments found for Course ID: " + courseId + " and Student ID: " + studentId);
         else
             return records;
 
