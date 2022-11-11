@@ -122,6 +122,9 @@ public class StudentJdbcDao {
             throw throwStudentError("Student cannot be created with no first name");
         if(student.getGraduationYear()< LocalDateTime.now().getYear())
             throw throwStudentError("Student graduation year must be in the future");
+        if(!student.getFirstName().matches("[a-zA-Z]+") || !student.getLastName().matches("[a-zA-Z]+"))
+            throw throwStudentError("Student name must only be letters");
+
     }
 
     private PreparedStatement prepareStatement(String sql, Connection c, Student student) throws SQLException {

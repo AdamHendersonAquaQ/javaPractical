@@ -236,6 +236,15 @@ public class StudentJdbcDaoTest {
     }
 
     @Test
+    public void addStudentTest_fail_numberName() {
+        KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
+        when(jdbcTemplate.update(anyString(), any(MapSqlParameterSource.class), any(KeyHolder.class))).thenReturn(1);
+        when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
+        Student inputStudent = new Student(0, "Scott12", "Summmers", 2024);
+        assertThrows(StudentNotFoundException.class, () -> repository.addNewStudent(inputStudent));
+    }
+
+    @Test
     public void keyHolderFactoryTest()
     {
         GeneratedKeyHolderFactory keyHolderFactory = new GeneratedKeyHolderFactory();
