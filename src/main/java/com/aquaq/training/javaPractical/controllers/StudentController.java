@@ -1,12 +1,8 @@
 package com.aquaq.training.javaPractical.controllers;
 
 import com.aquaq.training.javaPractical.classes.Student;
-import com.aquaq.training.javaPractical.errorHandling.EnrollmentErrorResponse;
-import com.aquaq.training.javaPractical.errorHandling.StudentNotFoundException;
 import com.aquaq.training.javaPractical.jdbc.StudentJdbcDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,17 +45,5 @@ public class StudentController {
     public Student addStudent(@RequestBody Student student)
     {
         return studentJdbcDao.addNewStudent(student);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<EnrollmentErrorResponse> handleStudentException(StudentNotFoundException exc) {
-        return new ResponseEntity<>(new EnrollmentErrorResponse(HttpStatus.NOT_FOUND.value(),
-                exc.getMessage(),System.currentTimeMillis()), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<EnrollmentErrorResponse> handleException(Exception exc) {
-        return new ResponseEntity<>(new EnrollmentErrorResponse(HttpStatus.BAD_REQUEST.value(),
-                exc.getMessage(),System.currentTimeMillis()), HttpStatus.BAD_REQUEST);
     }
 }

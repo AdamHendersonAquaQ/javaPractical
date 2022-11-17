@@ -144,12 +144,16 @@ public class CourseJdbcDao {
     public void courseChecks(Course course) {
         if(course.getCourseName()==null||course.getCourseName().isEmpty())
             throw throwCourseError("Course cannot be created with no name");
+        if(!course.getCourseName().matches("^[a-zA-Z0-9_.-]*$"))
+            throw throwCourseError("This is not a valid course name");
         if(course.getCreditAmount()<0)
             throw throwCourseError("Course credit amount cannot be less than 0");
         else if(course.getCreditAmount()>20)
             throw throwCourseError("Course credit amount cannot exceed 20");
         if(course.getStudentCapacity()<0)
             throw throwCourseError("Student capacity cannot be less than 0");
+        if(!course.getSemesterCode().matches("^[A-Z]+[0-9]{4}$"))
+            throw throwCourseError("This is not a valid semester code");
     }
 
     public static CourseNotFoundException throwCourseError(String errorMsg)
