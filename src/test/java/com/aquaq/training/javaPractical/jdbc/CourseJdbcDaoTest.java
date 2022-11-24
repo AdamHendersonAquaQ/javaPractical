@@ -9,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -46,7 +46,7 @@ public class CourseJdbcDaoTest {
         List<Course> courses = new ArrayList<>();
         courses.add(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class))))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class)))
                 .thenReturn(courses);
 
         List<Course> returnVal = repository.findAll();
@@ -59,7 +59,7 @@ public class CourseJdbcDaoTest {
     {
         List<Course> courses = new ArrayList<>();
 
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class))))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class)))
                 .thenReturn(courses);
 
         assertThrows(CourseNotFoundException.class, () -> repository.findAll());
@@ -87,7 +87,7 @@ public class CourseJdbcDaoTest {
         Course course = new Course(9,"Biology","Science",
                 5,5,"WINTER2023");
         when(jdbcTemplate.queryForObject(anyString(),eq(Integer.class),anyInt())).thenReturn(0);
-        when(jdbcTemplate.query(anyString(),eq(new BeanPropertyRowMapper<>(Course.class)),anyString(), anyString())).thenReturn(List.of(course));
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class),anyString(), anyString())).thenReturn(List.of(course));
         when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(),
                 anyInt(), anyString(), anyInt())).thenReturn(1);
         assertEquals(repository.updateCourse(course),"Course has been successfully updated. ");
@@ -115,7 +115,7 @@ public class CourseJdbcDaoTest {
         List<Course> courses = new ArrayList<>();
         courses.add(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)),anyString()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
                 .thenReturn(courses);
 
         List<Course> returnVal = repository.findBySemester("WINTER2023");
@@ -127,7 +127,7 @@ public class CourseJdbcDaoTest {
     {
         List<Course> courses = new ArrayList<>();
 
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)), anyInt()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
                 .thenReturn(courses);
         assertThrows(CourseNotFoundException.class, () -> repository.findBySemester("WINTER2023"));
     }
@@ -138,7 +138,7 @@ public class CourseJdbcDaoTest {
         List<Course> courses = new ArrayList<>();
         courses.add(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)),anyString()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
                 .thenReturn(courses);
 
         List<Course> returnVal = repository.findByCourseName("Biology");
@@ -150,7 +150,7 @@ public class CourseJdbcDaoTest {
     {
         List<Course> courses = new ArrayList<>();
 
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)), anyInt()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
                 .thenReturn(courses);
         assertThrows(CourseNotFoundException.class, () -> repository.findByCourseName("Biology"));
     }
@@ -160,7 +160,7 @@ public class CourseJdbcDaoTest {
     {
         List<Course> courses = List.of(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)),anyInt()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyInt()))
                 .thenReturn(courses);
 
         List<Course> returnVal = repository.findById(9);
@@ -172,7 +172,7 @@ public class CourseJdbcDaoTest {
     {
         List<Course> courses = new ArrayList<>();
 
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)), anyInt()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
                 .thenReturn(courses);
         assertThrows(CourseNotFoundException.class, () -> repository.findById(9));
     }
@@ -183,7 +183,7 @@ public class CourseJdbcDaoTest {
         List<Course> courses = new ArrayList<>();
         courses.add(new Course(9,"Biology","Science",
                 5,5,"WINTER2023"));
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)),anyString()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class),anyString()))
                 .thenReturn(courses);
 
         List<Course> returnVal = repository.findBySubjectArea("Science");
@@ -195,7 +195,7 @@ public class CourseJdbcDaoTest {
     {
         List<Course> courses = new ArrayList<>();
 
-        when(jdbcTemplate.query(anyString(), eq(new BeanPropertyRowMapper<>(Course.class)), anyInt()))
+        when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyInt()))
                 .thenReturn(courses);
         assertThrows(CourseNotFoundException.class, () -> repository.findBySubjectArea("WINTER2023"));
     }
@@ -205,7 +205,7 @@ public class CourseJdbcDaoTest {
     {
         KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
         when(jdbcTemplate.update(anyString(),any(MapSqlParameterSource.class),any(KeyHolder.class))).thenReturn(1);
-        when(jdbcTemplate.query(anyString(),eq(new BeanPropertyRowMapper<>(Course.class)),anyString(), anyString())).thenReturn(new ArrayList<>());
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class),anyString(), anyString())).thenReturn(new ArrayList<Course>());
         when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
         Course inputCourse = new Course();
         inputCourse.setCourseName("Biology");
@@ -237,7 +237,7 @@ public class CourseJdbcDaoTest {
     {
         Course course = new Course(0,"Biology","English",5,5,"WINTER2023");
         Course retCourse = new Course(4,"Biology","English",5,5,"WINTER2023");
-        when(jdbcTemplate.query(anyString(),eq(new BeanPropertyRowMapper<>(Course.class)),anyString(), anyString())).thenReturn(List.of(retCourse));
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class),anyString(), anyString())).thenReturn(List.of(retCourse));
         assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
     }
 
@@ -284,7 +284,7 @@ public class CourseJdbcDaoTest {
         List<Course> courses = List.of(new Course(1,"Biology",
                 "Science",1,1,"WINTER2022"));
 
-        when(jdbcTemplate.query(anyString(),eq(new BeanPropertyRowMapper<>(Course.class)), anyInt(),anyString()))
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class), anyInt(),anyString()))
                 .thenReturn(courses);
         List<Course> returnVal = repository.getCoursesBySemester(1,"WINTER2022");
         assertEquals(returnVal.get(0).getCourseName(),"Biology");
@@ -293,8 +293,8 @@ public class CourseJdbcDaoTest {
     @Test
     public void getCoursesBySemesterTest_fail()
     {
-        when(jdbcTemplate.query(anyString(),eq(new BeanPropertyRowMapper<>(Course.class)), anyInt(),anyString()))
-                .thenReturn(new ArrayList<>());
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class), anyInt(),anyString()))
+                .thenReturn(new ArrayList<Course>());
         assertThrows(CourseNotFoundException.class,
                 ()->repository.getCoursesBySemester(1,"WINTER2022"));
     }
