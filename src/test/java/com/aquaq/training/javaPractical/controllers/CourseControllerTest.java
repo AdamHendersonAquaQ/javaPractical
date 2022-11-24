@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -148,5 +149,16 @@ public class CourseControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/course/studentSemester/?studentId=1&semesterCode=WINTER2022"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].courseId",Matchers.equalTo(1)));
+    }
+
+    @Test
+    public void getCapacityTest() throws Exception {
+        List<Map<String, Object>> result = List.of(Map.of("1",1));
+
+        Mockito.when(courseJdbcDao.getCapacity())
+                .thenReturn(result);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/course/capacity"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",Matchers.equalTo(result)));
     }
 }

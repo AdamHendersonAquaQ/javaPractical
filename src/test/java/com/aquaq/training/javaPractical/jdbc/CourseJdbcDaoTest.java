@@ -288,4 +288,13 @@ public class CourseJdbcDaoTest {
                 ()->repository.getCoursesBySemester(1,"WINTER2022"));
     }
 
+    @Test
+    public void getCapacityTest()
+    {
+        List<Map<String, Object>> result = List.of(Map.of("1",1));
+        when(jdbcTemplate.queryForList(anyString())).thenReturn(result);
+        List<Map<String, Object>> returnVal = repository.getCapacity();
+        assertEquals(returnVal.get(0).get("1"),1);
+    }
+
 }
