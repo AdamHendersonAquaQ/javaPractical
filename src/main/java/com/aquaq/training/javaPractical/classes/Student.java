@@ -47,10 +47,4 @@ public class Student {
     public void setGraduationYear(int graduationYear) {
         this.graduationYear = graduationYear;
     }
-
-    public String toString()
-    {
-        return String.format("\nPerson [id=%s, firstName=%s, lastName=%s, graduationYear=%s]",
-                this.studentId,this.firstName,this.lastName,this.graduationYear);
-    }
 }
