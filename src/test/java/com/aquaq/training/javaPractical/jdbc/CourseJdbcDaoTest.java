@@ -87,6 +87,7 @@ public class CourseJdbcDaoTest {
         Course course = new Course(9,"Biology","Science",
                 5,5,"WINTER2023");
         when(jdbcTemplate.queryForObject(anyString(),eq(Integer.class),anyInt())).thenReturn(0);
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class),anyString(), anyString())).thenReturn(List.of(course));
         when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(),
                 anyInt(), anyString(), anyInt())).thenReturn(1);
         assertEquals(repository.updateCourse(course),"Course has been successfully updated. ");
@@ -204,6 +205,7 @@ public class CourseJdbcDaoTest {
     {
         KeyHolder newKey = new GeneratedKeyHolder(List.of(Map.of("", 14)));
         when(jdbcTemplate.update(anyString(),any(MapSqlParameterSource.class),any(KeyHolder.class))).thenReturn(1);
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class),anyString(), anyString())).thenReturn(new ArrayList<Course>());
         when(keyHolderFactory.newKeyHolder()).thenReturn(newKey);
         Course inputCourse = new Course();
         inputCourse.setCourseName("Biology");
@@ -227,6 +229,15 @@ public class CourseJdbcDaoTest {
     public void addCourseTest_fail_badName()
     {
         Course course = new Course(0,"B&*^^%(","English",5,5,"WINTER2023");
+        assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
+    }
+
+    @Test
+    public void addCourseTest_fail_courseExists()
+    {
+        Course course = new Course(0,"Biology","English",5,5,"WINTER2023");
+        Course retCourse = new Course(4,"Biology","English",5,5,"WINTER2023");
+        when(jdbcTemplate.query(anyString(),any(RowMapper.class),anyString(), anyString())).thenReturn(List.of(retCourse));
         assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
     }
 

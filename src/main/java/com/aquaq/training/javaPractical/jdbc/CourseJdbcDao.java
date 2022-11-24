@@ -155,6 +155,15 @@ public class CourseJdbcDao {
                 "FROM StudentCourse RIGHT JOIN Course ON Course.courseId = StudentCourse.courseId GROUP BY Course.courseId");
     }
 
+    public boolean courseExists(Course course) {
+        logger.log(Level.INFO,"Finding courses named " + course.getCourseName() + " for semester " + course.getSemesterCode());
+        List<Course> courses = jdbcTemplate.query("select * from Course where semesterCode = ? AND courseName = ?",
+                new BeanPropertyRowMapper<>(Course.class), course.getSemesterCode(), course.getCourseName());
+        if(courses.size()==1 && course.getCourseId() == courses.get(0).getCourseId())
+            return false;
+        return courses.size() != 0;
+    }
+
     public void courseChecks(Course course) {
         if(course.getCourseName()==null||course.getCourseName().isEmpty())
             throw throwCourseError("Course cannot be created with no name");
@@ -166,8 +175,11 @@ public class CourseJdbcDao {
             throw throwCourseError("Course credit amount cannot exceed 20");
         if(course.getStudentCapacity()<0)
             throw throwCourseError("Student capacity cannot be less than 0");
-        if(!course.getSemesterCode().matches("^[A-Z]+[0-9]{4}$"))
+        if(!course.getSemesterCode().matches("(^(SUMMER|SPRING|WINTER|AUTUMN))+2+[0-9]{3}$")
+                || course.getSemesterCode().length()>10)
             throw throwCourseError("This is not a valid semester code");
+        if(courseExists(course))
+            throw throwCourseError("A course of this name already exists in this semester");
     }
 
     public static CourseNotFoundException throwCourseError(String errorMsg)
