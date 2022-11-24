@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +54,13 @@ public class CourseJdbcDao {
 
     public String updateCourse(Course course) {
         courseChecks(course);
+        logger.log(Level.INFO,"Getting current course capacity");
+        Integer courseCountVar = jdbcTemplate.queryForObject("SELECT COUNT(studentId) " +
+                        "AS capacityCount FROM StudentCourse WHERE courseId = ?", Integer.class, course.getCourseId());
+        if(courseCountVar==null)
+            courseCountVar=0;
+        if(course.getStudentCapacity()<courseCountVar)
+            throw throwCourseError("Course capacity cannot be set less than number already enrolled ("+courseCountVar+")");
         logger.log(Level.INFO,"Updating course with id: " + course.getCourseId());
         String sql = ("UPDATE Course SET CourseName=?, subjectArea=?,creditAmount=?,studentCapacity=?," +
                 "semesterCode=? WHERE courseId=?");
@@ -67,7 +75,7 @@ public class CourseJdbcDao {
 
     public List<Course> findBySemester(String semesterCode) {
         logger.log(Level.INFO,"Finding courses for semester " + semesterCode);
-        List<Course> courses = jdbcTemplate.query("select * from Course where semesterCode=?",
+        List<Course> courses = jdbcTemplate.query("select * from Course where semesterCode LIKE CONCAT('%', ?, '%')",
                 new BeanPropertyRowMapper<>(Course.class), semesterCode);
         if (courses.size() != 0)
             return courses;
@@ -77,7 +85,7 @@ public class CourseJdbcDao {
 
     public List<Course> findByCourseName(String courseName) {
         logger.log(Level.INFO,"Finding courses for name " + courseName);
-        List<Course> courses = jdbcTemplate.query("select * from Course where courseName=?",
+        List<Course> courses = jdbcTemplate.query("select * from Course where courseName LIKE CONCAT('%', ?, '%')",
                 new BeanPropertyRowMapper<>(Course.class), courseName);
         if (courses.size() != 0)
             return courses;
@@ -97,7 +105,7 @@ public class CourseJdbcDao {
 
     public List<Course> findBySubjectArea(String subjectArea) {
         logger.log(Level.INFO,"Finding courses for subjectArea " + subjectArea);
-        List<Course> courses = jdbcTemplate.query("select * from Course where subjectArea=?",
+        List<Course> courses = jdbcTemplate.query("select * from Course where subjectArea LIKE CONCAT('%', ?, '%')",
                 new BeanPropertyRowMapper<>(Course.class), subjectArea);
         if (courses.size() != 0)
             return courses;
@@ -139,6 +147,12 @@ public class CourseJdbcDao {
             return courses;
         else
             throw throwCourseError("No courses found for this student in Semester "+semesterCode);
+    }
+
+    public List<Map<String, Object>> getCapacity() {
+        logger.log(Level.INFO,"Getting current course capacity's");
+        return jdbcTemplate.queryForList("SELECT Course.courseId, COUNT(studentId) AS capacityCount " +
+                "FROM StudentCourse RIGHT JOIN Course ON Course.courseId = StudentCourse.courseId GROUP BY Course.courseId");
     }
 
     public void courseChecks(Course course) {

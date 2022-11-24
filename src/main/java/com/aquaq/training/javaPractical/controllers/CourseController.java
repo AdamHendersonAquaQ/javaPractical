@@ -4,8 +4,8 @@ import com.aquaq.training.javaPractical.classes.Course;
 import com.aquaq.training.javaPractical.jdbc.CourseJdbcDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -61,5 +61,11 @@ public class CourseController {
     public List<Course> getCoursesBySemester(@RequestParam int studentId, @RequestParam String semesterCode)
     {
         return courseJdbcDao.getCoursesBySemester(studentId,semesterCode);
+    }
+
+    @GetMapping("/capacity")
+    public List<Map<String, Object>> getCapacity()
+    {
+        return courseJdbcDao.getCapacity();
     }
 }

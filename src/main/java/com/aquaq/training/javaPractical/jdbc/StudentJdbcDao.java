@@ -77,11 +77,11 @@ public class StudentJdbcDao {
         List<Student> students;
         logger.log(Level.INFO,"Finding student with name: " + firstName+ " "+lastName);
         if(Objects.equals(firstName, "") && !Objects.equals(lastName, ""))
-            students = jdbcTemplate.query("select * from Student where lastName = ?", new BeanPropertyRowMapper<>(Student.class), lastName);
+            students = jdbcTemplate.query("select * from Student where lastName LIKE CONCAT('%', ?, '%')", new BeanPropertyRowMapper<>(Student.class), lastName);
         else if(!Objects.equals(firstName, "") && Objects.equals(lastName, ""))
-            students = jdbcTemplate.query("select * from Student where firstName = ?", new BeanPropertyRowMapper<>(Student.class), firstName);
+            students = jdbcTemplate.query("select * from Student where firstName LIKE CONCAT('%', ?, '%')", new BeanPropertyRowMapper<>(Student.class), firstName);
         else if (!Objects.equals(firstName, "") && !Objects.equals(lastName, ""))
-            students = jdbcTemplate.query("select * from Student where firstName = ? AND lastName = ?", new BeanPropertyRowMapper<>(Student.class), firstName, lastName);
+            students = jdbcTemplate.query("select * from Student where firstName LIKE CONCAT('%', ?, '%') AND lastName LIKE CONCAT('%', ?, '%')", new BeanPropertyRowMapper<>(Student.class), firstName, lastName);
         else
             throw throwStudentError("At least one name field must not be blank");
         if (students.size() != 0)

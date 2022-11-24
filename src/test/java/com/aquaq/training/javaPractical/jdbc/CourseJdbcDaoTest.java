@@ -86,6 +86,7 @@ public class CourseJdbcDaoTest {
     {
         Course course = new Course(9,"Biology","Science",
                 5,5,"WINTER2023");
+        when(jdbcTemplate.queryForObject(anyString(),eq(Integer.class),anyInt())).thenReturn(0);
         when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(),
                 anyInt(), anyString(), anyInt())).thenReturn(1);
         assertEquals(repository.updateCourse(course),"Course has been successfully updated. ");
@@ -101,6 +102,7 @@ public class CourseJdbcDaoTest {
     public void updateCourseTest_fail_noCourseFound() {
         Course course = new Course(9,"Biology","Science",
                 5,5,"WINTER2023");
+        when(jdbcTemplate.queryForObject(anyString(),eq(Integer.class),anyInt())).thenReturn(0);
         when(jdbcTemplate.update(anyString(),anyString(), anyString(), anyInt(),
                 anyInt(), anyString(), anyInt())).thenReturn(0);
         assertThrows(CourseNotFoundException.class, () -> repository.updateCourse(course));
@@ -218,6 +220,20 @@ public class CourseJdbcDaoTest {
     public void addCourseTest_fail_noName()
     {
         Course course = new Course();
+        assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
+    }
+
+    @Test
+    public void addCourseTest_fail_badName()
+    {
+        Course course = new Course(0,"B&*^^%(","English",5,5,"WINTER2023");
+        assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
+    }
+
+    @Test
+    public void addCourseTest_fail_badSemesterCode()
+    {
+        Course course = new Course(0,"Biology","English",5,5,"Summer?");
         assertThrows(CourseNotFoundException.class, () -> repository.addNewCourse(course));
     }
 
