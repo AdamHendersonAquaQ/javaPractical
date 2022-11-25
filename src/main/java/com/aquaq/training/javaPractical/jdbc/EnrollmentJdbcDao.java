@@ -65,7 +65,7 @@ public class EnrollmentJdbcDao {
                         "WHERE StudentCourse.courseId = ?",
                 new BeanPropertyRowMapper<>(Enrollment.class), id);
         if (records.size() == 0)
-            throw throwEnrollmentError("No enrollments found for Student ID: " +id);
+            throw throwEnrollmentError("No enrollments found for Course ID: " +id);
         else
             return records;
     }
